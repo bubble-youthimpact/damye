@@ -396,3 +396,21 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
   width: 100%; padding: 10px 12px; border: 1px solid #cfccc4; border-radius: 12px; background: #fff;
   font: inherit; font-size: .93rem; line-height: 1.45; resize: none; color: var(--text);
 }
+
+/* ---------- Privacy Policy & Terms ---------- */
+.legal { max-width: 800px; padding-block: 80px 110px; line-height: 1.7; }
+.legal h1 { font-size: 2.6rem; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+.legal-date { color: var(--muted); margin-bottom: 32px; }
+.legal h2 { font-size: 1.35rem; font-weight: 700; margin: 40px 0 12px; }
+.legal h3 { font-size: 1.05rem; font-weight: 600; margin: 22px 0 8px; }
+.legal p { margin-bottom: 12px; }
+.legal ul { margin: 0 0 12px; padding-left: 22px; }
+.legal li { margin-bottom: 6px; }
+.legal a { color: var(--mint-deep); text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 760px) { .legal { padding-block: 48px 80px; } .legal h1 { font-size: 2rem; } }
+
+/* ---------- Sign-up agreement ---------- */
+.agree { display: flex; align-items: flex-start; gap: 10px; margin: 6px 0 22px; font-size: .95rem; line-height: 1.45; cursor: pointer; }
+.agree input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--mint-deep); flex-shrink: 0; cursor: pointer; }
+.agree a, .legal-note a { color: var(--mint-deep); text-decoration: underline; text-underline-offset: 2px; }
+.legal-note { margin-top: 14px; text-align: center; font-size: .85rem; color: var(--muted); line-height: 1.45; }

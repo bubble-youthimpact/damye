@@ -86,7 +86,8 @@ window.DamyeGoogle = function (btn, done, fail) {
       if (s.exists) return;
       return ref.set({
         name: u.displayName || "", email: u.email || "", gender: "", age: "", nationality: "",
-        photo: u.photoURL || "", favorites: [], createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        photo: u.photoURL || "", favorites: [], createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        agreedToTermsAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     });
   }).then(done).catch(function (e) {
