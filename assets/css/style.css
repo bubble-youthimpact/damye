@@ -312,7 +312,9 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .fav-item p { margin-bottom: 8px; }
 
 .auth-foot { text-align: center; margin-top: 34px; }
-.auth-foot a { color: var(--mint); }
+.auth-foot a { display: inline-block; padding: 6px 4px; color: var(--text); }
+.auth-foot a span { color: var(--mint); }
+.auth-foot a:hover span { text-decoration: underline; }
 .forgot { text-align: right; margin: -6px 0 40px; }
 
 /* ---------- Responsive ---------- */
