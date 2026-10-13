@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="quiz">
+<header id="site-header"></header>
+<main>
+<div class="container container-narrow quiz-page">
+  <section class="quiz-row">
+    <div class="quiz-intro">
+      <span class="quiz-label">MBTI QUIZ</span>
+      <h1>Food Animal Type Quiz</h1>
+      <p>Answer a few quick questions to discover your Korean food animal and get matched with authentic local restaurants you'll love.</p>
+    </div>
+    <div>
+<div id="damye-quiz">
+<style>
+  #damye-quiz {
+    --accent: #95C4B8;
+    --accent-dark: #7AAE9F;
+    --accent-deep: #3F6F63;
+    --accent-soft: #EAF3F0;
+    --bg: #fbfaf5;
+    --card: #ffffff;
+    --text: #1f1f1f;
+    --muted: #666666;
+    --border: #E4E1D8;
+    font-family: 'Figtree', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8px 0;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  #damye-quiz * { box-sizing: border-box; font-family: inherit; margin: 0; }
+  #damye-quiz button { cursor: pointer; }
+  #damye-quiz button:focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 2px; }
+
+  #damye-quiz .dq-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+  }
+  #damye-quiz .dq-screen { display: none; }
+  #damye-quiz .dq-screen.active { display: block; }
+
+  /* Buttons */
+  #damye-quiz .dq-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 30px; border-radius: 999px; border: 1.5px solid var(--accent);
+    background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600;
+    transition: background-color .2s, border-color .2s;
+  }
+  #damye-quiz .dq-btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  #damye-quiz .dq-btn-ghost { background: #fff; color: var(--text); border-color: var(--border); }
+  #damye-quiz .dq-btn-ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  /* Intro */
+  #damye-quiz .dq-intro { text-align: center; }
+  #damye-quiz .dq-animals { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  #damye-quiz .dq-animals span {
+    width: 58px; height: 58px; border-radius: 50%; background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+  }
+  #damye-quiz .dq-intro h1 { font-size: 2rem; font-weight: 800; line-height: 1.25; margin-bottom: 14px; }
+  #damye-quiz .dq-intro p { color: var(--muted); font-size: 1.05rem; max-width: 500px; margin: 0 auto 30px; }
+  #damye-quiz .dq-meta { margin-top: 16px; font-size: .9rem; color: var(--muted); }
+
+  /* Question */
+  #damye-quiz .dq-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #damye-quiz .dq-back {
+    background: none; border: none; color: var(--muted); font-size: .95rem; font-weight: 500;
+    padding: 6px 4px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  #damye-quiz .dq-back:hover { color: var(--text); }
+  #damye-quiz .dq-counter { font-size: .9rem; font-weight: 600; color: var(--muted); }
+  #damye-quiz .dq-progress { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 28px; }
+  #damye-quiz .dq-progress-bar { height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+  #damye-quiz .dq-question { font-size: 1.35rem; font-weight: 700; line-height: 1.4; margin-bottom: 24px; }
+
+  #damye-quiz .dq-options { display: flex; flex-direction: column; gap: 12px; }
+  #damye-quiz .dq-option {
+    text-align: left; width: 100%; padding: 16px 20px; background: #fff;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 1rem; font-weight: 500; color: var(--text);
+    transition: border-color .15s, background-color .15s;
+  }
+  #damye-quiz .dq-option:hover { border-color: var(--accent); background: var(--accent-soft); }
+  #damye-quiz .dq-option.selected { border-color: var(--accent-dark); background: var(--accent-soft); font-weight: 600; }
+
+  /* Emoji shown to the left of some answers */
+  #damye-quiz .dq-option-emoji { font-size: 1em; margin-right: 10px; }
+
+  /* Result */
+  #damye-quiz .dq-result { text-align: center; }
+  #damye-quiz .dq-result-emoji {
+    width: 116px; height: 116px; margin: 0 auto 18px; border-radius: 50%;
+    background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 4rem;
+  }
+  #damye-quiz .dq-result-pre { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  #damye-quiz .dq-result-name { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin: 4px 0 6px; }
+  #damye-quiz .dq-result-tag { color: var(--accent-deep); font-weight: 600; margin-bottom: 22px; }
+  #damye-quiz .dq-result-desc { font-size: 1.05rem; color: #3a3a3a; line-height: 1.7; max-width: 580px; margin: 0 auto 30px; }
+  #damye-quiz .dq-section { text-align: left; border-top: 1px solid var(--border); padding-top: 24px; margin-top: 24px; }
+  #damye-quiz .dq-section h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; }
+  #damye-quiz .dq-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  #damye-quiz .dq-chip {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: #fff;
+    border: 1px solid var(--border); border-radius: 999px; font-size: .93rem; font-weight: 500;
+  }
+  #damye-quiz .dq-motto {
+    background: var(--accent-soft); border-radius: 16px; padding: 18px 22px;
+    font-size: 1.1rem; font-weight: 700; color: var(--accent-deep); text-align: center;
+  }
+  #damye-quiz .dq-mix-row { display: grid; grid-template-columns: 110px 1fr 44px; align-items: center; gap: 12px; margin-bottom: 10px; font-size: .93rem; }
+  #damye-quiz .dq-mix-track { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+  #damye-quiz .dq-mix-fill { height: 100%; background: var(--accent); border-radius: 5px; transition: width .6s ease; }
+  #damye-quiz .dq-mix-row.top .dq-mix-fill { background: var(--accent-deep); }
+  #damye-quiz .dq-mix-pct { text-align: right; color: var(--muted); font-weight: 600; }
+  #damye-quiz .dq-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
+  #damye-quiz .dq-actions-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  @media (max-width: 600px) {
+    #damye-quiz .dq-card { padding: 26px 18px; border-radius: 20px; }
+    #damye-quiz .dq-intro h1 { font-size: 1.6rem; }
+    #damye-quiz .dq-question { font-size: 1.15rem; }
+    #damye-quiz .dq-result-name { font-size: 1.8rem; }
+    #damye-quiz .dq-mix-row { grid-template-columns: 90px 1fr 40px; }
+    #damye-quiz .dq-btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #damye-quiz * { transition: none !important; }
+  }
+</style>
+
+  <!-- Intro -->
+  <div class="dq-card dq-screen dq-intro active" data-screen="intro">
+    <div class="dq-animals" aria-hidden="true">
+      <span>🐷</span><span>🐻</span><span>🐱</span><span>🦊</span><span>🦉</span><span>🐶</span>
+    </div>
+    <h1>What’s your Korean food animal?</h1>
+    <p>Answer a few quick questions about how you like to eat, and we’ll match you with the kind of Korean restaurants you’ll love.</p>
+    <button class="dq-btn" data-action="start">Start the test</button>
+    <div class="dq-meta" data-el="meta"></div>
+  </div>
+
+  <!-- Question -->
+  <div class="dq-card dq-screen" data-screen="quiz">
+    <div class="dq-top">
+      <button class="dq-back" data-action="back">‹ Back</button>
+      <span class="dq-counter" data-el="counter"></span>
+    </div>
+    <div class="dq-progress"><div class="dq-progress-bar" data-el="progress"></div></div>
+    <h2 class="dq-question" data-el="question"></h2>
+    <div data-el="options"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="dq-card dq-screen dq-result" data-screen="result">
+    <div class="dq-result-emoji" data-el="r-emoji"></div>
+    <div class="dq-result-pre">You’re a</div>
+    <h2 class="dq-result-name" data-el="r-name"></h2>
+    <div class="dq-result-tag" data-el="r-tag"></div>
+    <p class="dq-result-desc" data-el="r-desc"></p>
+
+    <div class="dq-section">
+      <h3>Your Damye matches</h3>
+      <div class="dq-chips" data-el="r-matches"></div>
+    </div>
+    <div class="dq-section">
+      <h3>Your food motto</h3>
+      <div class="dq-motto" data-el="r-motto"></div>
+    </div>
+    <div class="dq-section">
+      <h3>Your food mix</h3>
+      <div data-el="r-mix"></div>
+    </div>
+
+    <div class="dq-actions">
+      <button class="dq-btn" data-action="find">Find restaurants for my animal</button>
+      <div class="dq-actions-row">
+        <button class="dq-btn dq-btn-ghost" data-action="share">Share my result</button>
+        <button class="dq-btn dq-btn-ghost" data-action="restart">Retake the test</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  /* ========== SETTINGS (edit these) ========== */
+  var CONFIG = {
+    QUESTIONS_PER_QUIZ: 12,         // how many questions each person gets (max 30). Randomly picked each time.
+    SHUFFLE_OPTIONS: true,          // shuffle A/B/C/D order so the pattern isn't obvious
+    RESTAURANTS_PAGE: "restaurants.html"
+  };
+
+  /* Filter names exactly as they appear on your Restaurants page */
+  var FILTERS = {
+    mustVisit: { icon: "⭐", label: "Places you have to visit at least once" },
+    local:     { icon: "✅", label: "Local-approved favorites" },
+    warm:      { icon: "🍲", label: "Warm, home-style meals made with care and comfort" },
+    cool:      { icon: "✨", label: "Go out somewhere cool tonight" },
+    hot:       { icon: "🔥", label: "The hottest spots right now" },
+    insta:     { icon: "📷", label: "Perfect for your Instagram feed" },
+    wallet:    { icon: "👛", label: "Light on your wallet, full on your stomach" },
+    solo:      { icon: "👤", label: "Quiet spots perfect for solo dining" },
+    late:      { icon: "🌙", label: "Open late for night cravings" },
+    date:      { icon: "💚", label: "Perfect places for a date" },
+    music:     { icon: "🎵", label: "Places where the music sets the mood" },
+    korean:    { icon: "📍", label: "Where can you taste real Korean food" }
+  };
+
+  var ANIMALS = {
+    pig: {
+      emoji: "🐷", name: "Hungry Pig", tag: "Big portions, fair prices",
+      desc: "Your heart belongs to generous portions and wallet-friendly meals. You’re not looking for tiny decorative plates—you want food that is filling, satisfying, and worth every won. Whether it’s a late-night bowl of gukbap or a table full of Korean comfort food, you always know how to eat well without overspending.",
+      filters: ["wallet", "late", "mustVisit"],
+      motto: "“More food, more happiness!”"
+    },
+    bear: {
+      emoji: "🐻", name: "Cozy Bear", tag: "Home-style comfort seeker",
+      desc: "You eat with your heart. Give you a bubbling pot of kimchi jjigae, a table of banchan, and a restaurant where the owner has cooked the same recipe for thirty years, and you’re perfectly happy. You care less about trends and more about honest, warm food made with care—the kind of meal Koreans grow up on.",
+      filters: ["warm", "korean", "local"],
+      motto: "“The best food tastes like home.”"
+    },
+    cat: {
+      emoji: "🐱", name: "Aesthetic Cat", tag: "Atmosphere and visuals first",
+      desc: "For you, a meal is a whole experience. The lighting, the plating, the view from the window seat—it all matters. You love restaurants that are as beautiful as they are delicious, and your camera roll proves it. From date nights to slow weekend brunches, you find the places that make a moment feel special.",
+      filters: ["insta", "date", "cool"],
+      motto: "“If it looks beautiful, it tastes even better.”"
+    },
+    fox: {
+      emoji: "🦊", name: "Trendsetter Fox", tag: "Always first to the new spot",
+      desc: "You always know what’s next. While others are reading last year’s reviews, you’re already at Seoul’s newest opening with the most creative menu. You love hidden alleys and viral spots before everyone else finds them—and your friends trust you for the freshest recommendations.",
+      filters: ["hot", "cool", "music"],
+      motto: "“If it’s new, I’ve probably been there.”"
+    },
+    owl: {
+      emoji: "🦉", name: "Midnight Owl", tag: "Quiet late-night diner",
+      desc: "You come alive when the city quiets down. A peaceful counter seat, a carefully chosen playlist, a warm meal after midnight—that’s your perfect dinner. You enjoy eating on your own terms, and you know some of Seoul’s best food moments happen long after the dinner rush.",
+      filters: ["late", "solo", "music"],
+      motto: "“The best meals happen after dark.”"
+    },
+    dog: {
+      emoji: "🐶", name: "Friendly Dog", tag: "Share-the-table foodie",
+      desc: "Food is better with your people. You love famous, proven restaurants where you can order a full table and share everything with friends. Long lines don’t scare you—if everyone says it’s worth it, you want to be there too. For you, a great meal is really about great company.",
+      filters: ["mustVisit", "local", "warm"],
+      motto: "“Good food tastes even better when shared.”"
+    }
+  };
+
+  /*
+    QUESTIONS
+    Each option: [ "text", "animal", "emoji", "image URL" ]
+    - photo: true  → shows as a 2x2 picture grid.
+      Paste an image URL as the 4th item to replace the emoji
+      (e.g. upload the photo to Bubble's File manager and copy its link).
+  */
+  var QUESTIONS = [
+    { q: "It’s midnight, and you only have ₩10,000. What are you eating?", photo: true, o: [
+      ["A generous bowl of gukbap", "pig", "🍲", ""],
+      ["Warm kimchi jjigae", "bear", "🥘", ""],
+      ["Convenience-store ramen by the Han River", "owl", "🍜", ""],
+      ["A late-night restaurant trending online", "fox", "🔥", ""] ] },
+    { q: "Your friend asks you to choose tonight’s restaurant. Where do you go?", o: [
+      ["Somewhere affordable with generous portions", "pig"],
+      ["A restaurant famous for traditional Korean food", "bear"],
+      ["A beautiful restaurant perfect for photos", "cat"],
+      ["The hottest new restaurant in Seoul", "fox"] ] },
+    { q: "Which restaurant exterior makes you want to walk inside?", photo: true, o: [
+      ["A busy restaurant with a long line", "dog", "👥", ""],
+      ["A small, old-fashioned neighborhood restaurant", "bear", "🏠", ""],
+      ["A stylish restaurant with a beautiful entrance", "cat", "✨", ""],
+      ["A hidden bar glowing late at night", "owl", "🏮", ""] ] },
+    { q: "What matters most when dining out?", o: [
+      ["The meal is filling and worth the price", "pig"],
+      ["The food tastes authentic and comforting", "bear"],
+      ["The food and restaurant look beautiful", "cat"],
+      ["The restaurant feels new and exciting", "fox"] ] },
+    { q: "It’s Friday night. What sounds like the perfect plan?", o: [
+      ["Ordering a table full of food with friends", "dog"],
+      ["Visiting a new hotspot everyone is talking about", "fox"],
+      ["Having dinner at an aesthetic date spot", "cat"],
+      ["Finding a quiet restaurant open past midnight", "owl"] ] },
+    { q: "You have one free afternoon in Seoul. What kind of food experience do you want?", photo: true, o: [
+      ["A restaurant everyone should visit at least once", "dog", "⭐", ""],
+      ["A home-style Korean meal loved by locals", "bear", "🍚", ""],
+      ["A café or restaurant perfect for Instagram", "cat", "📸", ""],
+      ["A recently opened viral restaurant", "fox", "🚀", ""] ] },
+    { q: "Which restaurant review sounds most convincing?", o: [
+      ["“The portions are huge for the price.”", "pig"],
+      ["“Local residents have loved this place for years.”", "bear"],
+      ["“The atmosphere is perfect for a date.”", "cat"],
+      ["“The playlist completely sets the mood.”", "owl"] ] },
+    { q: "Your plans are suddenly cancelled. Where would you eat alone?", o: [
+      ["A quiet restaurant with comfortable solo seating", "owl"],
+      ["A familiar neighborhood restaurant", "bear"],
+      ["A famous restaurant I have always wanted to try", "dog"],
+      ["An affordable place where I can order a lot", "pig"] ] },
+    { q: "Choose your ideal table.", photo: true, o: [
+      ["A table covered with many affordable dishes", "pig", "🍱", ""],
+      ["A traditional Korean table setting", "bear", "🥢", ""],
+      ["A beautifully decorated date-night table", "cat", "🕯️", ""],
+      ["A dimly lit table beside a speaker or DJ booth", "owl", "🎧", ""] ] },
+    { q: "Which sentence sounds most like you?", o: [
+      ["“Good food tastes even better when shared.”", "dog"],
+      ["“The bigger the portion, the happier I am.”", "pig"],
+      ["“I always know where the newest hotspot is.”", "fox"],
+      ["“I prefer peaceful meals after everyone has gone home.”", "owl"] ] },
+    { q: "You arrive at a restaurant and discover there is a 40-minute wait. What do you do?", o: [
+      ["Wait—it must be famous for a reason.", "dog"],
+      ["Find a nearby restaurant with better value.", "pig"],
+      ["Take photos nearby while waiting.", "cat"],
+      ["Search for a newer hidden spot instead.", "fox"] ] },
+    { q: "Which menu would immediately catch your attention?", photo: true, o: [
+      ["A ₩9,900 unlimited meal", "pig", "💸", ""],
+      ["A handwritten menu with traditional dishes", "bear", "📝", ""],
+      ["A beautifully designed seasonal menu", "cat", "🌸", ""],
+      ["A creative menu with dishes you have never seen", "fox", "🧪", ""] ] },
+    { q: "It’s raining heavily. Where would you rather eat?", o: [
+      ["A warm neighborhood kalguksu restaurant", "bear"],
+      ["A lively restaurant packed with friends", "dog"],
+      ["A quiet late-night bar with calming music", "owl"],
+      ["An affordable restaurant serving large portions", "pig"] ] },
+    { q: "Someone gives you a free meal voucher. How do you use it?", o: [
+      ["Order the most expensive and filling meal possible.", "pig"],
+      ["Invite a friend and share the experience.", "dog"],
+      ["Reserve a beautiful restaurant for a special occasion.", "cat"],
+      ["Try a restaurant that recently became popular.", "fox"] ] },
+    { q: "Which restaurant detail makes you happiest?", o: [
+      ["Free rice and unlimited side-dish refills", "pig"],
+      ["A recipe passed down through generations", "bear"],
+      ["Beautiful plates and carefully arranged food", "cat"],
+      ["A playlist that perfectly matches the atmosphere", "owl"] ] },
+    { q: "You are visiting Korea for the first time. What do you want to experience?", photo: true, o: [
+      ["A famous restaurant everyone recommends", "dog", "🏆", ""],
+      ["A traditional Korean meal loved by locals", "bear", "🍚", ""],
+      ["A trendy restaurant frequently seen on Instagram", "cat", "📱", ""],
+      ["Seoul’s newest and most unusual food trend", "fox", "🆕", ""] ] },
+    { q: "Your meal is delicious, but the restaurant interior is old. What do you think?", o: [
+      ["“Great food matters more than decoration.”", "bear"],
+      ["“I wish the restaurant looked better in photos.”", "cat"],
+      ["“If the portions are generous, I’m satisfied.”", "pig"],
+      ["“I’m recommending this hidden gem to everyone.”", "dog"] ] },
+    { q: "What does your camera roll look like after eating out?", o: [
+      ["No photos—I was too busy eating.", "pig"],
+      ["One casual photo to remember the meal", "bear"],
+      ["Multiple photos of the food and interior", "cat"],
+      ["Videos showing the restaurant’s energy and music", "fox"] ] },
+    { q: "It’s 11:30 p.m., but you suddenly feel hungry. What do you do?", photo: true, o: [
+      ["Search for the largest meal available nearby", "pig", "🍖", ""],
+      ["Reheat a comforting homemade dish", "bear", "🍲", ""],
+      ["Find a peaceful restaurant that stays open late", "owl", "🌙", ""],
+      ["Message friends and ask who wants to eat together", "dog", "💬", ""] ] },
+    { q: "A restaurant has no sign and is hidden in an alley. Would you enter?", o: [
+      ["Yes, if local residents are eating there.", "bear"],
+      ["Yes, it could be an exciting hidden discovery.", "fox"],
+      ["Only if someone I trust recommends it.", "dog"],
+      ["Only if its menu offers good value for money.", "pig"] ] },
+    { q: "Which table would you choose?", photo: true, o: [
+      ["A large table in the center for sharing food", "dog", "🍽️", ""],
+      ["A quiet counter seat in the corner", "owl", "🪑", ""],
+      ["A window seat with perfect natural lighting", "cat", "☀️", ""],
+      ["A table closest to the side-dish refill station", "pig", "🥬", ""] ] },
+    { q: "You are planning a birthday dinner. What is your priority?", o: [
+      ["Everyone can share plenty of food.", "dog"],
+      ["The place feels warm and welcoming.", "bear"],
+      ["The restaurant looks special in photos.", "cat"],
+      ["The restaurant is new and exciting.", "fox"] ] },
+    { q: "Which notification would make you open Damye immediately?", o: [
+      ["“The best meals under ₩10,000 near you”", "pig"],
+      ["“A 30-year-old restaurant loved by locals”", "bear"],
+      ["“Five beautiful restaurants for your next date”", "cat"],
+      ["“This week’s hottest new openings”", "fox"] ] },
+    { q: "What kind of sound belongs in your perfect restaurant?", o: [
+      ["Friends laughing around a busy table", "dog"],
+      ["The bubbling sound of hot stew", "bear"],
+      ["Soft music in a beautifully designed space", "cat"],
+      ["A carefully curated late-night playlist", "owl"] ] },
+    { q: "You can add only one restaurant to your saved list. Which one do you choose?", o: [
+      ["The restaurant with the best value and largest portions", "pig"],
+      ["The restaurant locals consistently recommend", "bear"],
+      ["The restaurant with the most beautiful atmosphere", "cat"],
+      ["The restaurant everyone has recently started discussing", "fox"] ] },
+    { q: "Which food-related compliment describes you best?", o: [
+      ["“You always know where to get the most food for your money.”", "pig"],
+      ["“You find restaurants that feel like home.”", "bear"],
+      ["“You always choose the prettiest restaurants.”", "cat"],
+      ["“You discover cool restaurants before everyone else.”", "fox"] ] },
+    { q: "How do you usually discover restaurants?", o: [
+      ["Recommendations from friends and family", "dog"],
+      ["Watching where neighborhood residents eat", "bear"],
+      ["Instagram posts and beautifully edited reels", "cat"],
+      ["Exploring unfamiliar streets late at night", "owl"] ] },
+    { q: "Which meal would make your weekend complete?", photo: true, o: [
+      ["A huge Korean barbecue feast", "pig", "🥩", ""],
+      ["A warm home-style set meal", "bear", "🍱", ""],
+      ["Brunch at an aesthetic café", "cat", "🥞", ""],
+      ["Drinks and food at a venue with live music", "owl", "🎸", ""] ] },
+    { q: "You must eat at the same restaurant every week. Which one do you choose?", o: [
+      ["An affordable restaurant with generous portions", "pig"],
+      ["A friendly local restaurant where the owner recognizes me", "bear"],
+      ["A beautiful restaurant with a regularly changing menu", "cat"],
+      ["A lively restaurant where I can bring different friends", "dog"] ] },
+    { q: "Complete the sentence: “A restaurant is worth revisiting when…”", o: [
+      ["I leave completely full.", "pig"],
+      ["The food makes me feel comfortable and cared for.", "bear"],
+      ["Every detail of the experience feels thoughtfully designed.", "cat"],
+      ["It gives me a story I want to tell other people.", "fox"] ] }
+  ];
+
+  /* ========== QUIZ LOGIC (no need to edit below) ========== */
+  var root = document.getElementById("damye-quiz");
+  function $(sel) { return root.querySelector(sel); }
+  function el(name) { return $('[data-el="' + name + '"]'); }
+
+  var state = { order: [], optOrders: [], answers: [], current: 0, result: null };
+  var total = Math.min(CONFIG.QUESTIONS_PER_QUIZ, QUESTIONS.length);
+  el("meta").textContent = total + " questions · about 2 minutes";
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function show(name) {
+    root.querySelectorAll(".dq-screen").forEach(function (s) {
+      s.classList.toggle("active", s.getAttribute("data-screen") === name);
+    });
+    if (root.getBoundingClientRect().top < 0) root.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function start() {
+    var all = QUESTIONS.map(function (_, i) { return i; });
+    state.order = shuffle(all).slice(0, total);
+    state.optOrders = state.order.map(function (qi) {
+      var idx = QUESTIONS[qi].o.map(function (_, i) { return i; });
+      return CONFIG.SHUFFLE_OPTIONS ? shuffle(idx) : idx;
+    });
+    state.answers = [];
+    state.current = 0;
+    renderQuestion();
+    show("quiz");
+  }
+
+  function renderQuestion() {
+    var qi = state.order[state.current];
+    var q = QUESTIONS[qi];
+    el("counter").textContent = "Question " + (state.current + 1) + " of " + total;
+    el("progress").style.width = (state.current / total * 100) + "%";
+    el("question").textContent = q.q;
+
+    var box = el("options");
+    box.innerHTML = "";
+    box.className = "dq-options";
+
+    state.optOrders[state.current].forEach(function (oi) {
+      var opt = q.o[oi];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "dq-option";
+      if (opt[2]) {
+        var icon = document.createElement("span");
+        icon.className = "dq-option-emoji";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = opt[2];
+        btn.appendChild(icon);
+      }
+      btn.appendChild(document.createTextNode(opt[0]));
+      if (state.answers[state.current] === oi) btn.classList.add("selected");
+      btn.addEventListener("click", function () { choose(oi, btn); });
+      box.appendChild(btn);
+    });
+  }
+
+  var locked = false;
+  function choose(oi, btn) {
+    if (locked) return;
+    locked = true;
+    state.answers[state.current] = oi;
+    el("options").querySelectorAll("button").forEach(function (b) { b.classList.remove("selected"); });
+    btn.classList.add("selected");
+    setTimeout(function () {
+      locked = false;
+      state.current++;
+      if (state.current >= total) showResult();
+      else renderQuestion();
+    }, 280);
+  }
+
+  function back() {
+    if (state.current === 0) { show("intro"); return; }
+    state.current--;
+    renderQuestion();
+  }
+
+  function computeResult() {
+    var counts = {}, last = {};
+    Object.keys(ANIMALS).forEach(function (k) { counts[k] = 0; last[k] = -1; });
+    state.answers.forEach(function (oi, i) {
+      var animal = QUESTIONS[state.order[i]].o[oi][1];
+      counts[animal]++; last[animal] = i;
+    });
+    var winner = Object.keys(counts).sort(function (a, b) {
+      return (counts[b] - counts[a]) || (last[b] - last[a]); // tie → most recent answer wins
+    })[0];
+    return { winner: winner, counts: counts };
+  }
+
+  function showResult() {
+    var oldBox = root.querySelector(".share-fallback"); if (oldBox) oldBox.remove();
+    var r = computeResult();
+    state.result = r.winner;
+    var a = ANIMALS[r.winner];
+
+    el("r-emoji").textContent = a.emoji;
+    el("r-name").textContent = a.name + "!";
+    el("r-tag").textContent = a.tag;
+    el("r-desc").textContent = a.desc;
+    el("r-motto").textContent = a.motto;
+
+    var chips = el("r-matches");
+    chips.innerHTML = "";
+    a.filters.forEach(function (f) {
+      var c = document.createElement("span");
+      c.className = "dq-chip";
+      c.textContent = FILTERS[f].icon + "  " + FILTERS[f].label;
+      chips.appendChild(c);
+    });
+
+    var mix = el("r-mix");
+    mix.innerHTML = "";
+    Object.keys(r.counts).sort(function (x, y) { return r.counts[y] - r.counts[x]; }).forEach(function (k) {
+      var pct = Math.round(r.counts[k] / total * 100);
+      var row = document.createElement("div");
+      row.className = "dq-mix-row" + (k === r.winner ? " top" : "");
+      row.innerHTML = '<span>' + ANIMALS[k].emoji + ' ' + ANIMALS[k].name.split(" ")[1] + '</span>' +
+        '<div class="dq-mix-track"><div class="dq-mix-fill" style="width:0"></div></div>' +
+        '<span class="dq-mix-pct">' + pct + '%</span>';
+      mix.appendChild(row);
+      setTimeout(function () { row.querySelector(".dq-mix-fill").style.width = pct + "%"; }, 60);
+    });
+
+    el("progress").style.width = "100%";
+    show("result");
+  }
+
+  function findRestaurants() {
+    var url = CONFIG.RESTAURANTS_PAGE +
+      "?animal=" + encodeURIComponent(state.result);
+    window.location.href = new URL(url, window.location.href).href;
+  }
+
+  function share(btn) {
+    var a = ANIMALS[state.result];
+    var text = "I’m a " + a.emoji + " " + a.name + " on Damye’s Korean Food Animal test! Find yours:";
+    var link = window.location.href.split("?")[0];
+    Damye.share(btn, "Damye Food Animal", text, link);
+  }
+
+  root.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t || !root.contains(t)) return;
+    var act = t.getAttribute("data-action");
+    if (act === "start" || act === "restart") start();
+    else if (act === "back") back();
+    else if (act === "find") findRestaurants();
+    else if (act === "share") share(t);
+  });
+})();
+</script>
+</div>
+    </div>
+  </section>
+
+  <section class="quiz-row">
+    <div class="quiz-intro">
+      <span class="quiz-label">BALANCE GAME</span>
+      <h1>Korea Food Balance Game</h1>
+      <p>Pick your side in 20 fun food dilemmas and find out what kind of eater you really are.</p>
+    </div>
+    <div>
+<div id="damye-balance">
+<style>
+  #damye-balance {
+    --accent: #95C4B8;
+    --accent-dark: #7AAE9F;
+    --accent-deep: #3F6F63;
+    --accent-soft: #EAF3F0;
+    --bg: #fbfaf5;
+    --card: #ffffff;
+    --text: #1f1f1f;
+    --muted: #666666;
+    --border: #E4E1D8;
+    font-family: 'Figtree', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8px 0;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  #damye-balance * { box-sizing: border-box; font-family: inherit; margin: 0; }
+  #damye-balance button { cursor: pointer; }
+  #damye-balance button:focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 2px; }
+
+  #damye-balance .db-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+  }
+  #damye-balance .db-screen { display: none; }
+  #damye-balance .db-screen.active { display: block; }
+
+  /* Buttons */
+  #damye-balance .db-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 30px; border-radius: 999px; border: 1.5px solid var(--accent);
+    background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600;
+    transition: background-color .2s, border-color .2s;
+  }
+  #damye-balance .db-btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  #damye-balance .db-btn-ghost { background: #fff; color: var(--text); border-color: var(--border); }
+  #damye-balance .db-btn-ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  /* Intro */
+  #damye-balance .db-intro { text-align: center; }
+  #damye-balance .db-icons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  #damye-balance .db-icons span {
+    width: 58px; height: 58px; border-radius: 50%; background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+  }
+  #damye-balance .db-intro h1 { font-size: 2rem; font-weight: 800; line-height: 1.25; margin-bottom: 14px; }
+  #damye-balance .db-intro p { color: var(--muted); font-size: 1.05rem; max-width: 500px; margin: 0 auto 30px; }
+  #damye-balance .db-meta { margin-top: 16px; font-size: .9rem; color: var(--muted); }
+
+  /* Question */
+  #damye-balance .db-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #damye-balance .db-back {
+    background: none; border: none; color: var(--muted); font-size: .95rem; font-weight: 500;
+    padding: 6px 4px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  #damye-balance .db-back:hover { color: var(--text); }
+  #damye-balance .db-counter { font-size: .9rem; font-weight: 600; color: var(--muted); }
+  #damye-balance .db-progress { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 28px; }
+  #damye-balance .db-progress-bar { height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+  #damye-balance .db-question { font-size: 1.35rem; font-weight: 700; line-height: 1.4; margin-bottom: 24px; }
+
+  #damye-balance .db-options { display: flex; flex-direction: column; gap: 12px; }
+  #damye-balance .db-option {
+    text-align: left; width: 100%; padding: 16px 20px; background: #fff;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 1rem; font-weight: 500; color: var(--text);
+    transition: border-color .15s, background-color .15s;
+  }
+  #damye-balance .db-option:hover { border-color: var(--accent); background: var(--accent-soft); }
+  #damye-balance .db-option.selected { border-color: var(--accent-dark); background: var(--accent-soft); font-weight: 600; }
+  #damye-balance .db-option-emoji { font-size: 1em; margin-right: 10px; }
+
+  /* Result */
+  #damye-balance .db-result-head { text-align: center; margin-bottom: 28px; }
+  #damye-balance .db-result-head .db-big {
+    width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%;
+    background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 3.2rem;
+  }
+  #damye-balance .db-result-head h2 { font-size: 1.9rem; font-weight: 800; line-height: 1.25; margin-bottom: 8px; }
+  #damye-balance .db-result-head p { color: var(--muted); font-size: 1.02rem; }
+  #damye-balance .db-recap { border-top: 1px solid var(--border); }
+  #damye-balance .db-recap-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  #damye-balance .db-recap-q { font-size: .92rem; color: var(--muted); margin-bottom: 4px; }
+  #damye-balance .db-recap-a { font-size: 1.02rem; font-weight: 600; color: var(--accent-deep); }
+  #damye-balance .db-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
+  #damye-balance .db-actions-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  @media (max-width: 600px) {
+    #damye-balance .db-card { padding: 26px 18px; border-radius: 20px; }
+    #damye-balance .db-intro h1 { font-size: 1.6rem; }
+    #damye-balance .db-question { font-size: 1.15rem; }
+    #damye-balance .db-result-head h2 { font-size: 1.6rem; }
+    #damye-balance .db-btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #damye-balance * { transition: none !important; }
+  }
+</style>
+
+  <!-- Intro -->
+  <div class="db-card db-screen db-intro active" data-screen="intro">
+    <div class="db-icons" aria-hidden="true">
+      <span>🍗</span><span>🍜</span><span>🍲</span><span>🥩</span><span>🌶️</span><span>🍰</span>
+    </div>
+    <h1>The Korean food balance game</h1>
+    <p>No right answers, just your honest food choices. Pick the one that sounds most like you.</p>
+    <button class="db-btn" data-action="start">Start the game</button>
+    <div class="db-meta" data-el="meta"></div>
+  </div>
+
+  <!-- Question -->
+  <div class="db-card db-screen" data-screen="quiz">
+    <div class="db-top">
+      <button class="db-back" data-action="back">‹ Back</button>
+      <span class="db-counter" data-el="counter"></span>
+    </div>
+    <div class="db-progress"><div class="db-progress-bar" data-el="progress"></div></div>
+    <h2 class="db-question" data-el="question"></h2>
+    <div class="db-options" data-el="options"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="db-card db-screen" data-screen="result">
+    <div class="db-result-head">
+      <div class="db-big" aria-hidden="true">🍽️</div>
+      <h2>This is how you eat</h2>
+      <p>Here are all your picks. Send them to a friend and see how different you are.</p>
+    </div>
+    <div class="db-recap" data-el="recap"></div>
+    <div class="db-actions">
+      <button class="db-btn" data-action="explore">Explore restaurants</button>
+      <div class="db-actions-row">
+        <button class="db-btn db-btn-ghost" data-action="share">Share my picks</button>
+        <button class="db-btn db-btn-ghost" data-action="restart">Play again</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  /* ========== SETTINGS (edit these) ========== */
+  var CONFIG = {
+    SHUFFLE_QUESTIONS: false,       // true = questions appear in random order
+    RESTAURANTS_PAGE: "restaurants.html"
+  };
+
+  /*
+    QUESTIONS
+    Each option: "text"  or  ["text", "emoji"]
+    The emoji appears small on the left of the answer.
+  */
+  var QUESTIONS = [
+    { q: "You wake up at 2 a.m. feeling extremely hungry. What do you do?", o: [
+      "Order fried chicken immediately",
+      "Make instant ramen with every topping available",
+      "Search for a restaurant still open",
+      "Ignore it and dream about breakfast" ] },
+    { q: "Your friend says, “I know a place,” and leads you into a dark alley. What are you thinking?", o: [
+      "“This is definitely going to be amazing.”",
+      "“Does this place even have a menu?”",
+      "“I hope it’s not expensive.”",
+      "“Should I share my location with someone?”" ] },
+    { q: "You only have ₩10,000 left. What are you choosing?", o: [
+      ["Tteokbokki and fried snacks", "🌶️"],
+      ["A steaming bowl of gukbap", "🍲"],
+      ["Convenience-store ramen and snacks", "🍜"],
+      ["One beautiful slice of cake and coffee", "🍰"] ] },
+    { q: "You could eat only one Korean dish for an entire month. Which one survives?", o: [
+      ["Korean barbecue", "🥩"],
+      ["Kimchi jjigae", "🥘"],
+      ["Tteokbokki", "🌶️"],
+      ["Bibimbap", "🍚"] ] },
+    { q: "Your food arrives, but your friend is still taking photos. What do you do?", o: [
+      "Wait patiently",
+      "Secretly take one bite",
+      "Help them find the perfect angle",
+      "Say, “The food is getting cold!”" ] },
+    { q: "Which restaurant red flag can you forgive?", o: [
+      "A long waiting line",
+      "A tiny and confusing menu",
+      "An old-fashioned interior",
+      "Slightly expensive prices",
+      "A location that is difficult to find" ] },
+    { q: "Which food crime is the worst?", o: [
+      "Eating pizza with a knife and fork",
+      "Leaving the last piece without asking",
+      "Taking food from someone else’s plate",
+      "Saying “I’m not hungry” and then eating half your food" ] },
+    { q: "You find a restaurant with no sign, no reviews, and only three menu items. Are you going in?", o: [
+      "Absolutely—it could be legendary",
+      "Only if locals are inside",
+      "Only if my friend goes first",
+      "No reviews? No chance" ] },
+    { q: "What is your role at a group dinner?", o: [
+      "The person who chooses the restaurant",
+      "The person who orders for everyone",
+      "The person who takes all the photos",
+      "The person who eats everything left on the table" ] },
+    { q: "Choose one unlimited refill forever.", o: [
+      "Rice",
+      "Side dishes",
+      "Meat",
+      "Drinks",
+      "Dessert" ] },
+    { q: "Your favorite restaurant suddenly becomes viral. How do you react?", o: [
+      "I’m proud that everyone discovered it",
+      "I’m annoyed because the waiting line will be longer",
+      "I tell everyone I knew it first",
+      "I immediately search for a new hidden gem" ] },
+    { q: "Which sound makes you the hungriest?", o: [
+      "Meat sizzling on a grill",
+      "Stew bubbling in a stone pot",
+      "Fried chicken crunching",
+      "A drink being poured over ice" ] },
+    { q: "You are given a free plane ticket, but the destination is based on food. Where are you going?", o: [
+      ["Tokyo for sushi and ramen", "🍣"],
+      ["Bangkok for street food", "🍢"],
+      ["Naples for pizza and pasta", "🍕"],
+      ["Jeju for seafood and black pork", "🐟"] ] },
+    { q: "Which restaurant superpower would you choose?", o: [
+      "Never having to wait in line",
+      "Getting 50% off every meal",
+      "Knowing exactly what to order",
+      "Always receiving the best seat",
+      "Being able to eat without getting full" ] },
+    { q: "Your meal is delicious, but the portion is tiny. What is your honest reaction?", o: [
+      "Quality matters more than quantity",
+      "I’m ordering another dish",
+      "Delicious, but I’m never coming back",
+      "Time to find dessert" ] },
+    { q: "Choose your perfect rainy-day meal.", o: [
+      ["Pajeon and makgeolli", "🥞"],
+      ["Spicy ramen", "🍜"],
+      ["Kalguksu", "🍲"],
+      ["Kimchi jjigae", "🥘"] ] },
+    { q: "What is the strongest sign that a restaurant will be good?", o: [
+      "A long line of local customers",
+      "A short menu",
+      "An elderly owner cooking in the kitchen",
+      "A smell you can notice from outside",
+      "Photos all over social media" ] },
+    { q: "Someone says, “Let’s just share everything.” What does that mean to you?", o: [
+      "Perfect—I want to taste everything",
+      "Fine, but we need clear boundaries",
+      "I’m protecting my favorite dish",
+      "I would rather order my own food" ] },
+    { q: "What would convince you to travel one hour for a restaurant?", o: [
+      "A dish available nowhere else",
+      "A recommendation from someone I trust",
+      "An incredible view or atmosphere",
+      "Huge portions at a low price",
+      "Nothing—food should come to me" ] },
+    { q: "Complete the sentence: “A perfect meal must end with…”", o: [
+      "Dessert",
+      "Fried rice",
+      "Coffee",
+      "One more drink",
+      "Unbuttoning my jeans" ] }
+  ];
+
+  /* ========== GAME LOGIC (no need to edit below) ========== */
+  var root = document.getElementById("damye-balance");
+  function el(name) { return root.querySelector('[data-el="' + name + '"]'); }
+  function optText(opt) { return Array.isArray(opt) ? opt[0] : opt; }
+  function optEmoji(opt) { return Array.isArray(opt) ? opt[1] : ""; }
+
+  var total = QUESTIONS.length;
+  var state = { order: [], answers: [], current: 0 };
+  el("meta").textContent = total + " questions · about 2 minutes";
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function show(name) {
+    root.querySelectorAll(".db-screen").forEach(function (s) {
+      s.classList.toggle("active", s.getAttribute("data-screen") === name);
+    });
+    if (root.getBoundingClientRect().top < 0) root.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function start() {
+    var idx = QUESTIONS.map(function (_, i) { return i; });
+    state.order = CONFIG.SHUFFLE_QUESTIONS ? shuffle(idx) : idx;
+    state.answers = [];
+    state.current = 0;
+    renderQuestion();
+    show("quiz");
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.order[state.current]];
+    el("counter").textContent = "Question " + (state.current + 1) + " of " + total;
+    el("progress").style.width = (state.current / total * 100) + "%";
+    el("question").textContent = q.q;
+
+    var box = el("options");
+    box.innerHTML = "";
+    q.o.forEach(function (opt, oi) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "db-option";
+      if (optEmoji(opt)) {
+        var icon = document.createElement("span");
+        icon.className = "db-option-emoji";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = optEmoji(opt);
+        btn.appendChild(icon);
+      }
+      btn.appendChild(document.createTextNode(optText(opt)));
+      if (state.answers[state.current] === oi) btn.classList.add("selected");
+      btn.addEventListener("click", function () { choose(oi, btn); });
+      box.appendChild(btn);
+    });
+  }
+
+  var locked = false;
+  function choose(oi, btn) {
+    if (locked) return;
+    locked = true;
+    state.answers[state.current] = oi;
+    el("options").querySelectorAll("button").forEach(function (b) { b.classList.remove("selected"); });
+    btn.classList.add("selected");
+    setTimeout(function () {
+      locked = false;
+      state.current++;
+      if (state.current >= total) showResult();
+      else renderQuestion();
+    }, 280);
+  }
+
+  function back() {
+    if (state.current === 0) { show("intro"); return; }
+    state.current--;
+    renderQuestion();
+  }
+
+  function showResult() {
+    var oldBox = root.querySelector(".share-fallback"); if (oldBox) oldBox.remove();
+    var recap = el("recap");
+    recap.innerHTML = "";
+    state.order.forEach(function (qi, i) {
+      var q = QUESTIONS[qi];
+      var opt = q.o[state.answers[i]];
+      var item = document.createElement("div");
+      item.className = "db-recap-item";
+      var qEl = document.createElement("div");
+      qEl.className = "db-recap-q";
+      qEl.textContent = (i + 1) + ". " + q.q;
+      var aEl = document.createElement("div");
+      aEl.className = "db-recap-a";
+      aEl.textContent = (optEmoji(opt) ? optEmoji(opt) + " " : "") + optText(opt);
+      item.appendChild(qEl); item.appendChild(aEl);
+      recap.appendChild(item);
+    });
+    el("progress").style.width = "100%";
+    show("result");
+  }
+
+  function share(btn) {
+    var text = "I just played Damye’s Korean food balance game. Can you guess my picks? Play here:";
+    var link = window.location.href.split("?")[0];
+    Damye.share(btn, "Damye Food Balance Game", text, link);
+  }
+
+  root.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t || !root.contains(t)) return;
+    var act = t.getAttribute("data-action");
+    if (act === "start" || act === "restart") start();
+    else if (act === "back") back();
+    else if (act === "explore") window.location.href = new URL(CONFIG.RESTAURANTS_PAGE, window.location.href).href;
+    else if (act === "share") share(t);
+  });
+})();
+</script>
+</div>
+    </div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+
+</body>
+</html>

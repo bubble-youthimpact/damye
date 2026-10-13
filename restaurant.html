@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restaurant — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="restaurants">
+<header id="site-header"></header>
+<main>
+<div class="container detail" id="detail"></div>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  var D = Damye, C = window.DAMYE_CONFIG || {};
+  var r = D.byId(D.param("id"));
+  var box = document.getElementById("detail");
+  if (!r) {
+    box.innerHTML = '<div class="empty" style="padding:120px 20px"><p style="margin-bottom:24px">We couldn’t find that restaurant.</p><a class="btn" href="restaurants.html">See all restaurants</a></div>';
+    return;
+  }
+  document.title = D.name(r) + " — Damye";
+  var tag = r.tags && r.tags.length ? D.filterByKey(r.tags[0]) : null;
+
+  // Similar: same cuisine first, then most shared filters
+  var similar = D.restaurants.filter(function (x) { return x.id !== r.id; }).map(function (x) {
+    var shared = (x.tags || []).filter(function (t) { return (r.tags || []).indexOf(t) > -1; }).length;
+    return { x: x, s: (x.cuisine === r.cuisine ? 10 : 0) + shared };
+  }).sort(function (a, b) { return b.s - a.s; }).slice(0, 3).map(function (o) { return o.x; });
+
+  box.innerHTML =
+    '<div class="detail-top">' +
+      '<div class="detail-img">' + D.imageHTML(r) + '</div>' +
+      '<div>' +
+        (tag ? '<span class="tag-chip">' + D.esc(tag.label) + '</span>' : '') +
+        '<div class="detail-title"><h1>' + D.esc(D.name(r)) + '</h1>' + D.heartButton(r.id) + '</div>' +
+        '<div class="detail-info"><div class="r-meta">' + D.price(r) + ' · ' + D.esc(r.cuisine) + '</div>' +
+          (r.hours ? '<div class="r-meta">' + D.icon("clock") + '<span>' + D.esc(r.hours) + '</span></div>' : '') + '</div>' +
+        '<p class="detail-desc">' + D.esc(r.desc) + '</p>' +
+        '<a class="btn btn-block" href="' + D.esc(D.mapsLink(r)) + '" target="_blank" rel="noopener">View on Google Maps</a>' +
+      '</div>' +
+    '</div>' +
+    '<h2>Location</h2>' +
+    (r.lat && r.lng ? '<div id="map"></div>' : '<div class="map-missing">Map coming soon — use “View on Google Maps” above.</div>') +
+    (similar.length ? '<h2>Similar Restaurants</h2><div class="card-grid">' + similar.map(D.cardHTML).join("") + '</div>' : '') +
+    '<div style="height:100px"></div>';
+  D.refreshHearts();
+
+  // Google Map
+  // If Google refuses the key (wrong website, API off, no billing) show a friendly note instead of a grey box
+  window.gm_authFailure = function () {
+    var m = document.getElementById("map");
+    if (m) m.outerHTML = '<div class="map-missing">The map couldn’t load. Use “View on Google Maps” above to see the location.</div>';
+  };
+  window.renderMap = function (lat, lng) {
+    if (!lat || !lng) return;
+    var mapDiv = document.getElementById("map");
+    if (!mapDiv) return;
+    if (window.google && window.google.maps) {
+      var map = new google.maps.Map(mapDiv, { zoom: 16, center: { lat: lat, lng: lng } });
+      new google.maps.Marker({ position: { lat: lat, lng: lng }, map: map });
+    } else {
+      window.initMap = function () { window.renderMap(lat, lng); };
+      if (!document.querySelector('script[src*="maps.googleapis.com"]')) {
+        var s = document.createElement("script");
+        s.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(C.googleMapsKey) + "&callback=initMap";
+        s.async = true;
+        document.head.appendChild(s);
+      }
+    }
+  };
+  if (r.lat && r.lng) window.renderMap(Number(r.lat), Number(r.lng));
+})();
+</script>
+</body>
+</html>

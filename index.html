@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Damye — Discover restaurants curated by DAMYE</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home" class="header-overlay">
+<header id="site-header"></header>
+<main>
+<section class="hero">
+  <div>
+    <span class="hero-badge"><img class="flag" src="assets/img/taegeuk.webp" alt="">Explore Korean cuisine</span>
+    <h1>Discover restaurants<br>curated by <span class="mint">DAMYE</span></h1>
+    <form class="search-box" action="restaurants.html" role="search">
+      <span data-icon="search"></span>
+      <label class="sr-only" for="hero-q">Search for restaurants</label>
+      <input id="hero-q" name="q" type="search" placeholder="Search for restaurants ...">
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container-narrow">
+    <div class="section-head">
+      <h2>Discover by Categories</h2>
+      <a class="more-link" href="restaurants.html">Explore categories <span data-icon="arrow"></span></a>
+    </div>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="container container-narrow">
+    <div class="section-head">
+      <h2>Most Popular</h2>
+      <a class="more-link" href="restaurants.html">View all <span data-icon="arrow"></span></a>
+    </div>
+    <div class="card-grid" id="popular-grid"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container-narrow">
+    <div class="section-head"><h2>About DAMYE</h2></div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon" data-icon="utensils"></div>
+        <h3>Discover Real Korean Dining</h3>
+        <p>Damye helps travelers and locals discover authentic Korean restaurants that reflect real Korean culture, tradition, and everyday life — beyond viral trends and tourist hotspots.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" data-icon="soup"></div>
+        <h3>Supporting Local Restaurants</h3>
+        <p>We focus on highlighting small, family-run, and local restaurants that deserve more recognition for their quality, history, and unique stories.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" data-icon="users"></div>
+        <h3>Connecting People Through Food</h3>
+        <p>We believe food is more than just a meal. Through Damye, we connect people with meaningful experiences, local communities, and the stories behind each restaurant.</p>
+      </div>
+    </div>
+    <div class="center-btn"><a class="btn" href="about.html">Learn more</a></div>
+  </div>
+</section>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  var D = Damye;
+  document.getElementById("cat-grid").innerHTML = D.FILTERS.map(function (f) {
+    return '<a class="cat-card" href="restaurants.html?filter=' + f.key + '">' + D.icon(f.icon) + '<span>' + D.esc(f.label) + '</span></a>';
+  }).join("");
+  var popular = D.restaurants.filter(function (r) { return r.popular; });
+  if (!popular.length) popular = D.restaurants;
+  document.getElementById("popular-grid").innerHTML = popular.slice(0, 3).map(D.cardHTML).join("");
+  D.refreshHearts();
+})();
+</script>
+</body>
+</html>

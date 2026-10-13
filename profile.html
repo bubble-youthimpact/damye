@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="account">
+<header id="site-header"></header>
+<main>
+<div class="container page-pad">
+  <form class="panel" id="profile-form" novalidate>
+    <div class="profile-head">
+      <h1 class="panel-title center">Profile</h1>
+      <button type="button" class="logout-btn" id="logout">Logout</button>
+    </div>
+    <div id="setup"></div>
+    <div class="avatar-wrap">
+      <button type="button" class="avatar-btn" id="avatar-btn" aria-label="Change profile photo">
+        <div class="avatar-default" id="avatar"><img src="assets/img/avatar.webp" alt=""></div>
+      </button>
+      <button type="button" class="avatar-remove" id="avatar-remove" aria-label="Remove photo" hidden><span data-icon="x"></span></button>
+      <input type="file" id="avatar-file" accept="image/*" hidden>
+    </div>
+    <p class="avatar-hint">Click the photo to change it</p>
+    <a class="pill-link" href="favorites.html"><span data-icon="heart"></span>My favorite restaurants</a>
+    <div class="notice notice-error" id="err" hidden></div>
+    <div class="notice notice-ok" id="ok" hidden></div>
+    <div class="field"><label for="p-name">Name<span class="req">*</span></label><input class="input" id="p-name" required autocomplete="name"></div>
+    <div class="field"><label for="p-email">Email<span class="req">*</span></label><input class="input" id="p-email" type="email" required autocomplete="email"></div>
+    <div class="field"><label for="p-gender">Gender</label>
+      <select class="input" id="p-gender">
+        <option value=""></option><option>Female</option><option>Male</option><option>Other</option><option>Prefer not to say</option>
+      </select></div>
+    <div class="field"><label for="p-age">Age</label><input class="input" id="p-age" type="number" min="1" max="120" inputmode="numeric"></div>
+    <div class="field"><label for="p-nat">Nationality</label><input class="input" id="p-nat" autocomplete="country-name"></div>
+    <button class="btn btn-block" type="submit" id="p-save" style="margin-top:18px">Save</button>
+    <button type="button" class="link-btn text-red center-link" id="delete" style="margin:30px auto 0">Delete account</button>
+  </form>
+</div>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+window.DamyeAuthMsg = function (e) {
+  var m = {
+    "auth/invalid-credential": "Email or password is incorrect.",
+    "auth/wrong-password": "Email or password is incorrect.",
+    "auth/user-not-found": "Email or password is incorrect.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/email-already-in-use": "An account with this email already exists. Try logging in.",
+    "auth/weak-password": "Please use a password with at least 6 characters.",
+    "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
+    "auth/requires-recent-login": "For your security, please log out and log in again, then try once more.",
+    "auth/network-request-failed": "Network error. Check your connection and try again.",
+    "auth/popup-blocked": "Your browser blocked the Google window. Allow pop-ups for this site and try again.",
+    "auth/unauthorized-domain": "Google login isn’t allowed on this web address yet. Add it in Firebase → Authentication → Settings → Authorized domains.",
+    "auth/operation-not-allowed": "This login method isn’t turned on in Firebase yet.",
+    "auth/account-exists-with-different-credential": "This email already has a Damye account. Log in with your email and password."
+  };
+  return m[e && e.code] || "Something went wrong. Please try again.";
+};
+// Google login (used on Login and Sign up). Creates the profile on first sign-in.
+window.DamyeGoogle = function (btn, done, fail) {
+  var D = Damye;
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  btn.disabled = true;
+  D.auth.signInWithPopup(provider).then(function (res) {
+    var u = res.user, ref = D.userDoc(u.uid);
+    return ref.get().then(function (s) {
+      if (s.exists) return;
+      return ref.set({
+        name: u.displayName || "", email: u.email || "", gender: "", age: "", nationality: "",
+        photo: u.photoURL || "", favorites: [], createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
+  }).then(done).catch(function (e) {
+    btn.disabled = false;
+    if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return fail(null);
+    fail(e);
+  });
+};
+window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connected yet. Add your Firebase settings in <b>assets/js/config.js</b>.</div>';
+</script>
+
+<script>
+(function () {
+  var D = Damye;
+  var USER_SVG = '<img src="assets/img/avatar.webp" alt="">';
+  var err = document.getElementById("err"), ok = document.getElementById("ok");
+  function fail(msg) { ok.hidden = true; err.textContent = msg; err.hidden = false; }
+  function done(msg) { err.hidden = true; ok.textContent = msg; ok.hidden = false; }
+  if (!D.accountsOn) { document.getElementById("setup").innerHTML = DamyeNotSetUp; return; }
+
+  var photo = "", user = null, $ = function (id) { return document.getElementById(id); };
+  function showPhoto() {
+    $("avatar").innerHTML = photo ? '<img src="' + photo + '" alt="Your profile photo">' : USER_SVG;
+    $("avatar-remove").hidden = !photo;
+  }
+
+  D.onUser(function (u) {
+    if (!u) { location.replace("login.html?next=profile.html"); return; }
+    user = u;
+    $("p-email").value = u.email || "";
+    var googleOnly = u.providerData.length && u.providerData.every(function (pd) { return pd.providerId === "google.com"; });
+    if (googleOnly) { $("p-email").readOnly = true; $("p-email").title = "This email comes from your Google account"; }
+    D.userDoc(u.uid).get().then(function (s) {
+      var d = s.exists ? s.data() : {};
+      $("p-name").value = d.name || "";
+      $("p-gender").value = d.gender || "";
+      $("p-age").value = d.age || "";
+      $("p-nat").value = d.nationality || "";
+      photo = d.photo || ""; showPhoto();
+    });
+  });
+
+  // Photo: resized in the browser and saved with the profile (no extra storage needed)
+  $("avatar-btn").addEventListener("click", function () { $("avatar-file").click(); });
+  $("avatar-file").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () {
+      var size = 256, c = document.createElement("canvas"); c.width = c.height = size;
+      var s = Math.min(img.width, img.height);
+      c.getContext("2d").drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+      photo = c.toDataURL("image/jpeg", 0.85); URL.revokeObjectURL(url); showPhoto();
+      done("Photo ready — click Save to keep it.");
+    };
+    img.onerror = function () { fail("That file couldn't be read as an image."); };
+    img.src = url; this.value = "";
+  });
+  $("avatar-remove").addEventListener("click", function () { photo = ""; showPhoto(); done("Photo removed — click Save to keep this change."); });
+
+  $("profile-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!user) return;
+    var name = $("p-name").value.trim(), email = $("p-email").value.trim();
+    if (!name || !email) return fail("Name and email are required.");
+    var btn = $("p-save"); btn.disabled = true;
+    var age = $("p-age").value;
+    D.userDoc(user.uid).set({
+      name: name, email: user.email, gender: $("p-gender").value,
+      age: age ? Number(age) : "", nationality: $("p-nat").value.trim(), photo: photo
+    }, { merge: true }).then(function () {
+      if (email !== user.email) {
+        return user.verifyBeforeUpdateEmail(email).then(function () {
+          done("Saved. We sent a link to " + email + " — click it to finish changing your email.");
+        });
+      }
+      done("Your profile has been saved.");
+    }).catch(function (e) { fail(DamyeAuthMsg(e)); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  $("logout").addEventListener("click", function () {
+    D.auth.signOut().then(function () { location.href = "index.html"; });
+  });
+
+  $("delete").addEventListener("click", function () {
+    if (!user || !confirm("Delete your account? Your profile and favorites will be removed permanently.")) return;
+    var u = user;
+    D.userDoc(u.uid).delete().then(function () { return u.delete(); })
+      .then(function () { location.href = "index.html"; })
+      .catch(function (e) { fail(DamyeAuthMsg(e)); });
+  });
+})();
+</script>
+</body>
+</html>

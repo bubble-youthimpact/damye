@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="contact">
+<header id="site-header"></header>
+<main>
+<div class="contact-head">
+  <h1>Contact Us</h1>
+  <p>Questions, partnerships, or just want to say hello — we'd love to hear from you.</p>
+</div>
+<div class="container" style="padding-bottom:100px">
+  <form class="panel" id="contact-form" novalidate>
+    <div class="notice notice-ok" id="sent" hidden>Thank you! Your message has been sent. We'll get back to you soon.</div>
+    <div class="notice notice-error" id="err" hidden></div>
+    <div class="form-row">
+      <div class="field"><label for="c-name">Name<span class="req">*</span></label><input class="input" id="c-name" name="name" required autocomplete="name"></div>
+      <div class="field"><label for="c-email">Email<span class="req">*</span></label><input class="input" id="c-email" name="email" type="email" required autocomplete="email"></div>
+    </div>
+    <div class="field"><label for="c-subject">Subject<span class="req">*</span></label><input class="input" id="c-subject" name="subject" required></div>
+    <div class="field"><label for="c-message">Message<span class="req">*</span></label><textarea class="input" id="c-message" name="message" required></textarea></div>
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <button class="btn btn-block" type="submit" id="c-send" style="margin-top:18px">Send message <span data-icon="send"></span></button>
+  </form>
+</div>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  var C = window.DAMYE_CONFIG || {};
+  var form = document.getElementById("contact-form");
+  var err = document.getElementById("err"), ok = document.getElementById("sent"), btn = document.getElementById("c-send");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    err.hidden = true; ok.hidden = true;
+    var data = {
+      name: form.name.value.trim(), email: form.email.value.trim(),
+      subject: form.subject.value.trim(), message: form.message.value.trim()
+    };
+    if (!data.name || !data.email || !data.subject || !data.message) { err.textContent = "Please fill in every field."; err.hidden = false; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { err.textContent = "Please enter a valid email address."; err.hidden = false; return; }
+    if (form._honey.value) return;
+    btn.disabled = true;
+    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(C.formsubmitEmail), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        name: data.name, email: data.email, message: data.message,
+        _subject: "[Damye] " + data.subject, _replyto: data.email, _template: "table", _captcha: "false"
+      })
+    }).then(function (res) { return res.json(); }).then(function (j) {
+      if (j && (j.success === true || j.success === "true")) { form.reset(); ok.hidden = false; }
+      else throw new Error((j && j.message) || "send failed");
+    }).catch(function () {
+      err.textContent = "Sorry, your message couldn't be sent. Please try again, or message us on Instagram.";
+      err.hidden = false;
+    }).then(function () { btn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

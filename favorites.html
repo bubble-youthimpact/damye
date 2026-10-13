@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Favorites — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="account">
+<header id="site-header"></header>
+<main>
+<div class="container page-pad">
+  <div class="panel">
+    <h1 class="panel-title center">Favorites</h1>
+    <div id="setup"></div>
+    <div class="fav-list" id="fav-list"></div>
+    <a class="btn btn-block" href="restaurants.html">Explore more restaurants</a>
+    <a class="center-link" href="profile.html">Back to profile</a>
+  </div>
+</div>
+</main>
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/restaurants.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+window.DamyeAuthMsg = function (e) {
+  var m = {
+    "auth/invalid-credential": "Email or password is incorrect.",
+    "auth/wrong-password": "Email or password is incorrect.",
+    "auth/user-not-found": "Email or password is incorrect.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/email-already-in-use": "An account with this email already exists. Try logging in.",
+    "auth/weak-password": "Please use a password with at least 6 characters.",
+    "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
+    "auth/requires-recent-login": "For your security, please log out and log in again, then try once more.",
+    "auth/network-request-failed": "Network error. Check your connection and try again.",
+    "auth/popup-blocked": "Your browser blocked the Google window. Allow pop-ups for this site and try again.",
+    "auth/unauthorized-domain": "Google login isn’t allowed on this web address yet. Add it in Firebase → Authentication → Settings → Authorized domains.",
+    "auth/operation-not-allowed": "This login method isn’t turned on in Firebase yet.",
+    "auth/account-exists-with-different-credential": "This email already has a Damye account. Log in with your email and password."
+  };
+  return m[e && e.code] || "Something went wrong. Please try again.";
+};
+// Google login (used on Login and Sign up). Creates the profile on first sign-in.
+window.DamyeGoogle = function (btn, done, fail) {
+  var D = Damye;
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  btn.disabled = true;
+  D.auth.signInWithPopup(provider).then(function (res) {
+    var u = res.user, ref = D.userDoc(u.uid);
+    return ref.get().then(function (s) {
+      if (s.exists) return;
+      return ref.set({
+        name: u.displayName || "", email: u.email || "", gender: "", age: "", nationality: "",
+        photo: u.photoURL || "", favorites: [], createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
+  }).then(done).catch(function (e) {
+    btn.disabled = false;
+    if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return fail(null);
+    fail(e);
+  });
+};
+window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connected yet. Add your Firebase settings in <b>assets/js/config.js</b>.</div>';
+</script>
+
+<script>
+(function () {
+  var D = Damye, box = document.getElementById("fav-list");
+  if (!D.accountsOn) { document.getElementById("setup").innerHTML = DamyeNotSetUp; return; }
+  function render() {
+    D.getFavorites().then(function (ids) {
+      var list = ids.map(D.byId).filter(Boolean);
+      box.innerHTML = list.length ? list.map(function (r) {
+        var href = "restaurant.html?id=" + encodeURIComponent(r.id);
+        return '<div class="fav-item"><div class="r-card-head"><h3><a href="' + href + '">' + D.esc(D.name(r)) + '</a></h3>' + D.heartButton(r.id) + '</div>' +
+          '<p>' + D.esc(r.desc) + '</p><div class="r-meta">' + D.price(r) + ' · ' + D.esc(r.cuisine) + '</div>' +
+          (r.hours ? '<div class="r-meta">' + D.icon("clock") + '<span>' + D.esc(r.hours) + '</span></div>' : '') + '</div>';
+      }).join("") : '<p class="empty" style="padding:30px 10px">No favorites yet. Tap the heart on any restaurant to save it here.</p>';
+      D.paintHearts(ids);
+    });
+  }
+  D.onUser(function (u) {
+    if (!u) { location.replace("login.html?next=favorites.html"); return; }
+    render();
+  });
+  document.addEventListener("damye:favorites", render);
+})();
+</script>
+</body>
+</html>
