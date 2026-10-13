@@ -37,6 +37,9 @@
 <script>
 (function () {
   var D = Damye;
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  // Random order once per visit (kept while filtering/searching so cards don't jump around)
+  var pool = shuffle(D.restaurants);
   var selected = [];
   var animal = D.param("animal"), filter = D.param("filter");
   if (animal && D.ANIMAL_FILTERS[animal]) selected = D.ANIMAL_FILTERS[animal].slice();
@@ -55,7 +58,7 @@
 
   function render() {
     var term = q.value.trim().toLowerCase();
-    var list = D.restaurants.filter(function (r) {
+    var list = pool.filter(function (r) {
       if (!term) return true;
       return [r.nameKo, r.nameEn, r.desc, r.cuisine, r.address].join(" ").toLowerCase().indexOf(term) > -1;
     });

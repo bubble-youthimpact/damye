@@ -52,7 +52,7 @@
     for (var i = 0; i < D.FILTERS.length; i++) if (D.FILTERS[i].key === k) return D.FILTERS[i];
     return null;
   };
-  /* Quiz result → filters that get switched on (restaurants.html?animal=pig) */
+  /* Quiz result → filters that get switched on (restaurants?animal=pig) */
   D.ANIMAL_FILTERS = {
     pig: ["wallet", "late", "mustVisit"],
     bear: ["warm", "korean", "local"],
@@ -133,7 +133,7 @@
     return next;
   };
   D.currentPageRef = function () {
-    return (location.pathname.split("/").pop() || "index.html") + location.search;
+    return (location.pathname.split("/").pop() || "./") + location.search;
   };
 
   /* ---------- Accounts (Firebase) ---------- */
@@ -169,7 +169,7 @@
 
   D.toggleFavorite = function (id) {
     if (!currentUser) {
-      location.href = "login.html?next=" + encodeURIComponent(D.currentPageRef());
+      location.href = "login?next=" + encodeURIComponent(D.currentPageRef());
       return Promise.resolve(null);
     }
     return D.getFavorites().then(function (list) {
@@ -200,7 +200,7 @@
     var b = e.target.closest && e.target.closest(".heart[data-fav]");
     if (!b) return;
     e.preventDefault();
-    if (!D.accountsOn) { location.href = "login.html"; return; }
+    if (!D.accountsOn) { location.href = "login"; return; }
     var id = b.getAttribute("data-fav");
     b.disabled = true;
     D.toggleFavorite(id).then(function () {
@@ -213,7 +213,7 @@
 
   /* ---------- Restaurant card ---------- */
   D.cardHTML = function (r) {
-    var href = "restaurant.html?id=" + encodeURIComponent(r.id);
+    var href = "restaurant?id=" + encodeURIComponent(r.id);
     return '<article class="r-card">' +
       '<a class="r-card-img" href="' + href + '" tabindex="-1">' + D.imageHTML(r) + "</a>" +
       '<div class="r-card-body">' +
@@ -239,16 +239,16 @@
     if (!a) return;
     var inn = signedInGuess();
     a.textContent = inn ? "Profile" : "Login";
-    a.href = inn ? "profile.html" : "login.html";
+    a.href = inn ? "profile" : "login";
   }
 
   function renderHeader() {
     var el = document.getElementById("site-header");
     if (!el) return;
     var page = document.body.getAttribute("data-page");
-    var links = [["about", "About Us", "about.html"], ["restaurants", "Restaurants", "restaurants.html"], ["quiz", "Quiz", "quiz.html"], ["contact", "Contact", "contact.html"]];
+    var links = [["about", "About Us", "about"], ["restaurants", "Restaurants", "restaurants"], ["quiz", "Quiz", "quiz"], ["contact", "Contact", "contact"]];
     var html = '<div class="container header-inner">' +
-      '<a class="logo" href="index.html" aria-label="Damye home">' + logoHTML() + "</a>" +
+      '<a class="logo" href="./" aria-label="Damye home">' + logoHTML() + "</a>" +
       '<button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false">' + D.icon("menu") + "</button>" +
       '<nav class="nav" aria-label="Main">';
     links.forEach(function (l) {
@@ -276,9 +276,9 @@
     if (!el) return;
     var ig = C.instagram || "damye.kr";
     el.innerHTML = '<div class="container footer-inner">' +
-      '<div><a class="logo" href="index.html">' + logoHTML() + "</a>" +
+      '<div><a class="logo" href="./">' + logoHTML() + "</a>" +
         "<p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div>" +
-      '<div><h4>Quick Links</h4><a href="about.html">About Us</a><a href="restaurants.html">Restaurants</a><a href="quiz.html">Quiz</a><a href="contact.html">Contact</a></div>' +
+      '<div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="contact">Contact</a></div>' +
       '<div><h4>Social Channels</h4><a class="social" href="https://instagram.com/' + D.esc(ig) + '" target="_blank" rel="noopener">' + D.icon("instagram") + "@" + D.esc(ig) + "</a></div>" +
       "</div>";
   }

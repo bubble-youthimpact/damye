@@ -31,7 +31,7 @@
       <input type="file" id="avatar-file" accept="image/*" hidden>
     </div>
     <p class="avatar-hint">Click the photo to change it</p>
-    <a class="pill-link" href="favorites.html"><span data-icon="heart"></span>My favorite restaurants</a>
+    <a class="pill-link" href="favorites"><span data-icon="heart"></span>My favorite restaurants</a>
     <div class="notice notice-error" id="err" hidden></div>
     <div class="notice notice-ok" id="ok" hidden></div>
     <div class="field"><label for="p-name">Name<span class="req">*</span></label><input class="input" id="p-name" required autocomplete="name"></div>
@@ -114,7 +114,7 @@ window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connec
   }
 
   D.onUser(function (u) {
-    if (!u) { location.replace("login.html?next=profile.html"); return; }
+    if (!u) { location.replace("login?next=profile"); return; }
     user = u;
     $("p-email").value = u.email || "";
     var googleOnly = u.providerData.length && u.providerData.every(function (pd) { return pd.providerId === "google.com"; });
@@ -168,14 +168,14 @@ window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connec
   });
 
   $("logout").addEventListener("click", function () {
-    D.auth.signOut().then(function () { location.href = "index.html"; });
+    D.auth.signOut().then(function () { location.href = "./"; });
   });
 
   $("delete").addEventListener("click", function () {
     if (!user || !confirm("Delete your account? Your profile and favorites will be removed permanently.")) return;
     var u = user;
     D.userDoc(u.uid).delete().then(function () { return u.delete(); })
-      .then(function () { location.href = "index.html"; })
+      .then(function () { location.href = "./"; })
       .catch(function (e) { fail(DamyeAuthMsg(e)); });
   });
 })();

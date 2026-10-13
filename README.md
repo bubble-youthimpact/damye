@@ -26,7 +26,7 @@ Plain HTML/CSS/JS — no build step. Upload the whole folder to a GitHub reposit
 4. After a minute the site is live at `https://YOUR-USERNAME.github.io/damye/`.
 5. Custom domain (optional): **Settings → Pages → Custom domain**, then add the DNS records GitHub shows.
 
-To test on your computer, run `python3 -m http.server` in this folder and open http://localhost:8000.
+To test on your computer, run `python3 tools/serve.py` in this folder and open http://localhost:8000. It understands the same clean addresses as GitHub Pages (`/about`, `/restaurants`, `/restaurant?id=mokro`).
 
 ## 2. Turn on accounts (Firebase, free)
 

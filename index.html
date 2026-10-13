@@ -20,7 +20,7 @@
   <div>
     <span class="hero-badge"><img class="flag" src="assets/img/taegeuk.webp" alt="">Explore Korean cuisine</span>
     <h1>Discover restaurants<br>curated by <span class="mint">DAMYE</span></h1>
-    <form class="search-box" action="restaurants.html" role="search">
+    <form class="search-box" action="restaurants" role="search">
       <span data-icon="search"></span>
       <label class="sr-only" for="hero-q">Search for restaurants</label>
       <input id="hero-q" name="q" type="search" placeholder="Search for restaurants ...">
@@ -32,7 +32,7 @@
   <div class="container container-narrow">
     <div class="section-head">
       <h2>Discover by Categories</h2>
-      <a class="more-link" href="restaurants.html">Explore categories <span data-icon="arrow"></span></a>
+      <a class="more-link" href="restaurants">Explore categories <span data-icon="arrow"></span></a>
     </div>
     <div class="cat-grid" id="cat-grid"></div>
   </div>
@@ -42,7 +42,7 @@
   <div class="container container-narrow">
     <div class="section-head">
       <h2>Most Popular</h2>
-      <a class="more-link" href="restaurants.html">View all <span data-icon="arrow"></span></a>
+      <a class="more-link" href="restaurants">View all <span data-icon="arrow"></span></a>
     </div>
     <div class="card-grid" id="popular-grid"></div>
   </div>
@@ -68,7 +68,7 @@
         <p>We believe food is more than just a meal. Through Damye, we connect people with meaningful experiences, local communities, and the stories behind each restaurant.</p>
       </div>
     </div>
-    <div class="center-btn"><a class="btn" href="about.html">Learn more</a></div>
+    <div class="center-btn"><a class="btn" href="about">Learn more</a></div>
   </div>
 </section>
 </main>
@@ -84,10 +84,12 @@
 (function () {
   var D = Damye;
   document.getElementById("cat-grid").innerHTML = D.FILTERS.map(function (f) {
-    return '<a class="cat-card" href="restaurants.html?filter=' + f.key + '">' + D.icon(f.icon) + '<span>' + D.esc(f.label) + '</span></a>';
+    return '<a class="cat-card" href="restaurants?filter=' + f.key + '">' + D.icon(f.icon) + '<span>' + D.esc(f.label) + '</span></a>';
   }).join("");
-  var popular = D.restaurants.filter(function (r) { return r.popular; });
-  if (!popular.length) popular = D.restaurants;
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  // New random order on every visit
+  var popular = shuffle(D.restaurants.filter(function (r) { return r.popular; }));
+  if (!popular.length) popular = shuffle(D.restaurants);
   document.getElementById("popular-grid").innerHTML = popular.slice(0, 3).map(D.cardHTML).join("");
   D.refreshHearts();
 })();

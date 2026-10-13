@@ -21,8 +21,8 @@
     <h1 class="panel-title center">Favorites</h1>
     <div id="setup"></div>
     <div class="fav-list" id="fav-list"></div>
-    <a class="btn btn-block" href="restaurants.html">Explore more restaurants</a>
-    <a class="center-link" href="profile.html">Back to profile</a>
+    <a class="btn btn-block" href="restaurants">Explore more restaurants</a>
+    <a class="center-link" href="profile">Back to profile</a>
   </div>
 </div>
 </main>
@@ -85,7 +85,7 @@ window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connec
     D.getFavorites().then(function (ids) {
       var list = ids.map(D.byId).filter(Boolean);
       box.innerHTML = list.length ? list.map(function (r) {
-        var href = "restaurant.html?id=" + encodeURIComponent(r.id);
+        var href = "restaurant?id=" + encodeURIComponent(r.id);
         return '<div class="fav-item"><div class="r-card-head"><h3><a href="' + href + '">' + D.esc(D.name(r)) + '</a></h3>' + D.heartButton(r.id) + '</div>' +
           '<p>' + D.esc(r.desc) + '</p><div class="r-meta">' + D.price(r) + ' · ' + D.esc(r.cuisine) + '</div>' +
           (r.hours ? '<div class="r-meta">' + D.icon("clock") + '<span>' + D.esc(r.hours) + '</span></div>' : '') + '</div>';
@@ -94,7 +94,7 @@ window.DamyeNotSetUp = '<div class="notice notice-info">Accounts aren’t connec
     });
   }
   D.onUser(function (u) {
-    if (!u) { location.replace("login.html?next=favorites.html"); return; }
+    if (!u) { location.replace("login?next=favorites"); return; }
     render();
   });
   document.addEventListener("damye:favorites", render);

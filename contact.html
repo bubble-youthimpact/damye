@@ -66,11 +66,23 @@
         name: data.name, email: data.email, message: data.message,
         _subject: "[Damye] " + data.subject, _replyto: data.email, _template: "table", _captcha: "false"
       })
-    }).then(function (res) { return res.json(); }).then(function (j) {
-      if (j && (j.success === true || j.success === "true")) { form.reset(); ok.hidden = false; }
-      else throw new Error((j && j.message) || "send failed");
-    }).catch(function () {
-      err.textContent = "Sorry, your message couldn't be sent. Please try again, or message us on Instagram.";
+    }).then(function (res) {
+      return res.text().then(function (t) {
+        var j = null; try { j = JSON.parse(t); } catch (x) {}
+        return { status: res.status, j: j, text: t };
+      });
+    }).then(function (r) {
+      var j = r.j || {}, msg = String(j.message || "");
+      if (j.success === true || j.success === "true") { form.reset(); ok.hidden = false; return; }
+      if (/activat/i.test(msg)) {
+        // First message ever: FormSubmit emails the site owner an activation link
+        ok.textContent = "Almost there: FormSubmit has sent an activation email to the site owner. Once it's activated, messages will arrive normally.";
+        ok.hidden = false; return;
+      }
+      err.textContent = "Sorry, your message couldn't be sent. (FormSubmit said: " + (msg || ("error " + r.status)) + ")";
+      err.hidden = false;
+    }).catch(function (e) {
+      err.textContent = "Sorry, your message couldn't be sent — the form service couldn't be reached. Please try again, or message us on Instagram.";
       err.hidden = false;
     }).then(function () { btn.disabled = false; });
   });
