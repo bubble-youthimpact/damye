@@ -20,7 +20,7 @@ window.DAMYE_CONFIG = {
 
   /* 3. CONTACT FORM — messages are emailed here through FormSubmit.
      The first message sends an activation email to this address; click it once. */
-  formsubmitEmail: "YOUR_EMAIL@example.com",
+  formsubmitEmail: "bubble.youthimpact@gmail.com",
 
   /* 4. SOCIAL */
   instagram: "damye.kr",
