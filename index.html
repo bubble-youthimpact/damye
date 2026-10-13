@@ -87,9 +87,8 @@
     return '<a class="cat-card" href="restaurants?filter=' + f.key + '">' + D.icon(f.icon) + '<span>' + D.esc(f.label) + '</span></a>';
   }).join("");
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  // New random order on every visit
-  var popular = shuffle(D.restaurants.filter(function (r) { return r.popular; }));
-  if (!popular.length) popular = shuffle(D.restaurants);
+  // 3 random restaurants from the whole list on every visit
+  var popular = shuffle(D.restaurants);
   document.getElementById("popular-grid").innerHTML = popular.slice(0, 3).map(D.cardHTML).join("");
   D.refreshHearts();
 })();
