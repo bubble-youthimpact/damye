@@ -356,7 +356,8 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
   .header-overlay #site-header.open .menu-btn { color: var(--text); }
   body.menu-open { overflow: hidden; }
   .header-inner { height: 76px; }
-  .container { padding: 0 20px; }
+  .container { padding-left: 20px; padding-right: 20px; }
+  .quiz-page { padding-bottom: 90px; }
   .hero, .about-hero, .meaning, .contact-head { padding-left: 20px; padding-right: 20px; }
   .section-head { flex-wrap: wrap; gap: 12px; }
   .card-grid, .feature-grid, .value-grid, .cat-grid, .footer-inner, .form-row { grid-template-columns: 1fr; }
