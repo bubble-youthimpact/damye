@@ -458,10 +458,10 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .report-cover { position: relative; background: #fff; border-bottom: 1px solid #efede7; }
 .report-sent {
   position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px 5px 6px; border-radius: 999px; background: #fff; color: var(--mint-deep);
-  font-size: .82rem; font-weight: 600; box-shadow: 0 2px 8px rgba(19, 29, 26, .08);
+  padding: 5px 12px 5px 6px; border-radius: 999px; background: var(--mint-deep); color: #fff;
+  font-size: .82rem; font-weight: 600; box-shadow: 0 2px 8px rgba(19, 29, 26, .12);
 }
-.report-sent i { width: 18px; height: 18px; border-radius: 50%; background: var(--mint); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.report-sent i { width: 18px; height: 18px; border-radius: 50%; background: #fff; color: var(--mint-deep); display: inline-flex; align-items: center; justify-content: center; }
 .report-sent svg { width: 11px; height: 11px; }
 .report-card .r-card-body { display: flex; flex-direction: column; flex: 1; }
 .report-headline { font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
