@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis Reports — Damye</title>
+<meta name="description" content="Discover authentic local Korean restaurants curated by DAMYE — beyond tourist spots and viral trends.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=202610141259">
+</head>
+<body data-page="reports">
+<header id="site-header"></header>
+<main>
+<section class="page-hero">
+  <h1>Analysis <span class="mint">Reports</span></h1>
+  <p>We read every public Google Maps review of the restaurants we feature, then share what guests love and what could be better with the owners. Here are the reports we have made so far.</p>
+</section>
+
+<div class="container container-narrow reports-page">
+  <div class="card-grid" id="report-grid"></div>
+</div>
+
+<div class="rp-modal" id="rp-modal" hidden>
+  <div class="rp-box" role="dialog" aria-modal="true" aria-labelledby="rp-title">
+    <div class="rp-bar">
+      <h2 id="rp-title">Report</h2>
+      <div class="rp-actions">
+        <a class="rp-btn rp-hide-sm" id="rp-restaurant" href="restaurants">View restaurant</a>
+        <a class="rp-btn rp-fill" id="rp-download" download>Download PDF</a>
+        <button type="button" class="rp-close" id="rp-close" aria-label="Close"><span data-icon="x"></span></button>
+      </div>
+    </div>
+    <div class="rp-viewer">
+      <div class="rp-pages" id="rp-pages"></div>
+      <iframe class="rp-frame" id="rp-frame" title="Report PDF" hidden></iframe>
+      <div class="rp-loading" id="rp-loading" hidden>Loading report…</div>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="site-footer"><div class="container footer-inner"><div><a class="logo" href="./"><span class="logo-text">Damye</span></a><p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div><div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div><div><h4>Social Channels</h4><a class="social" href="https://instagram.com/damye.kr" target="_blank" rel="noopener"><svg class="icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@damye.kr</a></div></div></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js?v=202610141259"></script>
+<script src="assets/js/restaurants.js?v=202610141259"></script>
+<script src="assets/js/site.js?v=202610141259"></script>
+<script src="assets/js/reports.js?v=202610141259"></script>
+<script>
+(function () {
+  var D = Damye, REPORTS = window.DAMYE_REPORTS || [];
+  var grid = document.getElementById("report-grid");
+  var modal = document.getElementById("rp-modal");
+  var pagesEl = document.getElementById("rp-pages"), frame = document.getElementById("rp-frame");
+  var loadingEl = document.getElementById("rp-loading"), titleEl = document.getElementById("rp-title");
+  var dlEl = document.getElementById("rp-download"), restEl = document.getElementById("rp-restaurant");
+  var PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  var pdfjsReady = null, currentDoc = null, token = 0, resizeTimer = null, lastFocus = null;
+  var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  var arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+  function nameOf(r) { var x = D.byId(r.id); return x ? D.name(x) : r.id; }
+  function pdfOf(r) { return "assets/reports/" + r.id + ".pdf"; }
+
+  // ---- Cards ----
+  grid.innerHTML = REPORTS.length ? REPORTS.map(function (r, i) {
+    var meta = [r.date, r.reviews ? r.reviews.toLocaleString("en-US") + " reviews" : "", r.pages ? r.pages + " pages" : ""].filter(Boolean).join(" · ");
+    return '<article class="r-card report-card" tabindex="0" role="button" data-i="' + i + '" aria-label="View report: ' + D.esc(nameOf(r)) + '">' +
+      '<div class="r-card-img report-cover"><img src="assets/reports/covers/' + D.esc(r.id) + '.webp" alt="" loading="lazy" onerror="this.remove()">' +
+        (r.sent ? '<span class="report-sent"><i>' + check + '</i>Sent</span>' : '') + '</div>' +
+      '<div class="r-card-body">' +
+        '<div class="r-card-head"><h3>' + D.esc(nameOf(r)) + '</h3></div>' +
+        '<p class="report-headline">' + D.esc(r.title) + '</p>' +
+        '<p class="r-card-desc">' + D.esc(r.desc) + '</p>' +
+        '<div class="r-meta">' + D.icon("pin") + '<span>' + D.esc(r.area) + '</span></div>' +
+        '<div class="r-meta">' + D.icon("book") + '<span>' + D.esc(meta) + '</span></div>' +
+        '<span class="report-link">View report ' + arrow + '</span>' +
+      '</div></article>';
+  }).join("") : '<p class="empty">Reports are on their way.</p>';
+
+  grid.addEventListener("click", function (e) {
+    var c = e.target.closest(".report-card"); if (c) open(REPORTS[+c.dataset.i]);
+  });
+  grid.addEventListener("keydown", function (e) {
+    var c = e.target.closest(".report-card");
+    if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); open(REPORTS[+c.dataset.i]); }
+  });
+
+  // ---- PDF viewer ----
+  function loadPdfJs() {
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (!pdfjsReady) pdfjsReady = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = PDFJS + "pdf.min.js";
+      s.onload = function () { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; resolve(window.pdfjsLib); };
+      s.onerror = function () { pdfjsReady = null; reject(new Error("pdf.js failed")); };
+      document.head.appendChild(s);
+    });
+    return pdfjsReady;
+  }
+
+  async function renderPages(doc, keepScroll) {
+    var my = ++token;
+    var ratio = keepScroll && pagesEl.scrollHeight ? pagesEl.scrollTop / pagesEl.scrollHeight : 0;
+    var cs = getComputedStyle(pagesEl);
+    var width = pagesEl.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), list = [];
+    for (var i = 1; i <= doc.numPages; i++) {
+      var page = await doc.getPage(i); if (my !== token) return;
+      var base = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: (width / base.width) * dpr });
+      var c = document.createElement("canvas");
+      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      c.style.width = width + "px"; c.style.height = Math.floor(vp.height / dpr) + "px";
+      list.push({ page: page, vp: vp, c: c });
+    }
+    pagesEl.innerHTML = ""; list.forEach(function (x) { pagesEl.appendChild(x.c); });
+    if (keepScroll) pagesEl.scrollTop = ratio * pagesEl.scrollHeight;
+    for (var j = 0; j < list.length; j++) {
+      await list[j].page.render({ canvasContext: list[j].c.getContext("2d"), viewport: list[j].vp }).promise;
+      if (my !== token) return;
+      if (j === 0) loadingEl.hidden = true;
+    }
+  }
+
+  function useFrame(pdf) {   // backup: the browser's own PDF viewer
+    pagesEl.hidden = true; frame.hidden = false;
+    frame.onload = function () { loadingEl.hidden = true; };
+    frame.src = pdf;
+  }
+
+  function open(r) {
+    var pdf = pdfOf(r), rest = D.byId(r.id);
+    lastFocus = document.activeElement;
+    titleEl.textContent = nameOf(r);
+    dlEl.href = pdf;
+    dlEl.setAttribute("download", "Damye report - " + (rest && rest.nameEn ? rest.nameEn : r.id) + ".pdf");
+    restEl.hidden = !rest;
+    if (rest) restEl.href = "restaurant?id=" + encodeURIComponent(r.id);
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    document.getElementById("rp-close").focus();
+    pagesEl.hidden = false; frame.hidden = true; pagesEl.innerHTML = ""; pagesEl.scrollTop = 0;
+    loadingEl.hidden = false;
+    var my = ++token;
+    loadPdfJs()
+      .then(function (lib) { return lib.getDocument({ url: pdf, cMapUrl: PDFJS + "cmaps/", cMapPacked: true }).promise; })
+      .then(function (doc) {
+        if (my !== token) { doc.destroy(); return; }
+        currentDoc = doc; return renderPages(doc, false);
+      })
+      .catch(function () { if (my === token) useFrame(pdf); });
+  }
+
+  function close() {
+    token++;
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    if (currentDoc) { currentDoc.destroy(); currentDoc = null; }
+    pagesEl.innerHTML = ""; frame.onload = null; frame.src = "about:blank"; loadingEl.hidden = true;
+    if (lastFocus) lastFocus.focus();
+  }
+
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { if (currentDoc && !modal.hidden && !pagesEl.hidden) renderPages(currentDoc, true); }, 250);
+  });
+  document.getElementById("rp-close").addEventListener("click", close);
+  modal.addEventListener("click", function (e) { if (e.target === modal) close(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !modal.hidden) close(); });
+})();
+</script>
+</body>
+</html>

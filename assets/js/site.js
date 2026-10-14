@@ -246,7 +246,7 @@
     var el = document.getElementById("site-header");
     if (!el) return;
     var page = document.body.getAttribute("data-page");
-    var links = [["about", "About Us", "about"], ["restaurants", "Restaurants", "restaurants"], ["quiz", "Quiz", "quiz"], ["contact", "Contact", "contact"]];
+    var links = [["about", "About Us", "about"], ["restaurants", "Restaurants", "restaurants"], ["quiz", "Quiz", "quiz"], ["reports", "Reports", "reports"], ["contact", "Contact", "contact"]];
     var html = '<div class="container header-inner">' +
       '<a class="logo" href="./" aria-label="Damye home">' + logoHTML() + "</a>" +
       '<button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false">' + D.icon("menu") + "</button>" +
@@ -278,7 +278,7 @@
     el.innerHTML = '<div class="container footer-inner">' +
       '<div><a class="logo" href="./">' + logoHTML() + "</a>" +
         "<p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div>" +
-      '<div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div>' +
+      '<div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div>' +
       '<div><h4>Social Channels</h4><a class="social" href="https://instagram.com/' + D.esc(ig) + '" target="_blank" rel="noopener">' + D.icon("instagram") + "@" + D.esc(ig) + "</a></div>" +
       "</div>";
   }

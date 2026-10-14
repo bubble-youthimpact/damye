@@ -35,8 +35,8 @@ h1, h2, h3, h4, p { margin: 0; }
 :focus-visible { outline: 3px solid var(--mint-deep); outline-offset: 2px; }
 
 .icon { width: 1.15em; height: 1.15em; flex-shrink: 0; vertical-align: middle; }
-.container { width: 100%; max-width: 1270px; margin: 0 auto; padding: 0 24px; }
-.container-narrow { max-width: 1200px; }
+/* Every page uses the same 1280px content width (plus side padding) */
+.container { width: 100%; max-width: calc(1280px + 48px); margin: 0 auto; padding: 0 24px; }
 .section { padding: 88px 0; }
 .section-dark { background: var(--dark); color: #fff; }
 .mint { color: var(--mint); }
@@ -53,7 +53,7 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .nav { display: flex; align-items: center; gap: 6px; }
 .nav a {
-  padding: 7px 20px; border-radius: 999px; font-size: 1rem; color: var(--text);
+  white-space: nowrap; padding: 7px 20px; border-radius: 999px; font-size: 1rem; color: var(--text);
   transition: background-color .2s, color .2s;
 }
 .nav a:hover { background: var(--mint-soft); }
@@ -212,7 +212,7 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .split h2 { font-size: 2.6rem; font-weight: 600; margin-bottom: 26px; }
 .split p { font-size: 1.05rem; line-height: 1.6; max-width: 540px; }
 .values h2, .team h2 { text-align: center; font-size: 2.6rem; font-weight: 600; margin-bottom: 50px; }
-.value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1110px; margin: 0 auto; }
+.value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .value-card { background: #fff; border: 1px solid #ecebe6; border-radius: 18px; padding: 18px 24px 26px; text-align: center; }
 .value-card .feature-icon { margin-bottom: 26px; }
 .value-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 20px; }
@@ -325,8 +325,8 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
   .team-card { grid-template-columns: 1fr; }
   .quote { gap: 30px; font-size: 1.6rem; }
 }
-@media (max-width: 760px) {
-  .hero { min-height: 640px; }
+/* Mobile menu: switches on before the six links run out of room (they need about 820px) */
+@media (max-width: 900px) {
   .menu-btn { display: inline-flex; position: relative; z-index: 2; margin-right: -8px; border-radius: 12px; }
   .logo { position: relative; z-index: 2; }
   .nav {
@@ -356,6 +356,9 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
   .header-overlay #site-header.open .menu-btn { color: var(--text); }
   body.menu-open { overflow: hidden; }
   .header-inner { height: 76px; }
+}
+@media (max-width: 760px) {
+  .hero { min-height: 640px; }
   .container { padding-left: 20px; padding-right: 20px; }
   .quiz-page { padding-bottom: 90px; }
   .hero, .about-hero, .meaning, .contact-head { padding-left: 20px; padding-right: 20px; }
@@ -405,7 +408,8 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
   display: inline-block; padding: 6px 16px; border-radius: 999px; font-size: .88rem;
   background: var(--mint-soft); color: var(--mint-deep);
 }
-.legal-wrap { max-width: 900px; padding-block: 40px 110px; }
+.legal-wrap { padding-block: 40px 110px; }
+.legal-sec p, .legal-sec ul { max-width: 860px; }
 .legal-tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 36px; }
 .legal-tabs a { padding: 8px 20px; border-radius: 999px; border: 1px solid #e3e1da; background: #fff; font-weight: 500; transition: border-color .2s, background-color .2s; }
 .legal-tabs a:hover { border-color: var(--mint); }
@@ -442,3 +446,59 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .agree input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--mint-deep); flex-shrink: 0; cursor: pointer; }
 .agree a, .legal-note a { color: var(--mint-deep); text-decoration: underline; text-underline-offset: 2px; }
 .legal-note { margin-top: 14px; text-align: center; font-size: .85rem; color: var(--muted); line-height: 1.45; }
+
+/* ---------- Page heading (light) ---------- */
+.page-hero { text-align: center; padding: 88px 24px 8px; }
+.page-hero h1 { font-size: 2.6rem; font-weight: 700; line-height: 1.2; margin-bottom: 28px; }
+.page-hero p { max-width: 640px; margin: 0 auto; font-size: 1.05rem; line-height: 1.6; color: #333; }
+
+/* ---------- Analysis Reports (cards use the restaurant card style) ---------- */
+.reports-page { padding-block: 56px 110px; }
+.report-card { cursor: pointer; outline-offset: 3px; }
+.report-cover { position: relative; background: #fff; border-bottom: 1px solid #efede7; }
+.report-sent {
+  position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px 5px 6px; border-radius: 999px; background: #fff; color: var(--mint-deep);
+  font-size: .82rem; font-weight: 600; box-shadow: 0 2px 8px rgba(19, 29, 26, .08);
+}
+.report-sent i { width: 18px; height: 18px; border-radius: 50%; background: var(--mint); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.report-sent svg { width: 11px; height: 11px; }
+.report-card .r-card-body { display: flex; flex-direction: column; flex: 1; }
+.report-headline { font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+.report-card .r-meta { font-variant-numeric: tabular-nums; }
+.report-link { margin-top: auto; padding-top: 16px; display: inline-flex; align-items: center; gap: 8px; color: var(--mint-deep); font-weight: 600; }
+.report-link svg { width: 16px; height: 16px; transition: transform .2s; }
+.report-card:hover .report-link svg { transform: translateX(4px); }
+
+/* Report viewer */
+body.modal-open { overflow: hidden; }
+.rp-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(19, 29, 26, .72); }
+.rp-box { width: 100%; max-width: 1000px; height: 90vh; background: #fff; border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0, 0, 0, .25); }
+.rp-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px 14px 24px; border-bottom: 1px solid #efede7; }
+.rp-bar h2 { font-size: 1.1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.rp-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.rp-btn { padding: 8px 16px; border-radius: 999px; border: 1px solid #e3e1da; background: #fff; font-size: .93rem; font-weight: 500; transition: border-color .2s, background-color .2s; }
+.rp-btn:hover { border-color: var(--mint); }
+.rp-btn.rp-fill { background: var(--mint); border-color: var(--mint); color: #fff; }
+.rp-btn.rp-fill:hover { background: var(--mint-dark); border-color: var(--mint-dark); }
+.rp-close { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--mint-soft); color: var(--text); display: inline-flex; align-items: center; justify-content: center; }
+.rp-close .icon { width: 20px; height: 20px; }
+.rp-close:hover { background: #dcebe6; }
+.rp-viewer { position: relative; flex: 1; min-height: 0; background: #ecebe6; }
+.rp-pages { position: absolute; inset: 0; overflow-y: auto; padding: 16px; -webkit-overflow-scrolling: touch; }
+.rp-pages canvas { display: block; margin: 0 auto 16px; background: #fff; border-radius: 4px; box-shadow: 0 4px 16px rgba(19, 29, 26, .12); }
+.rp-pages canvas:last-child { margin-bottom: 0; }
+.rp-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.rp-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--muted); pointer-events: none; }
+.rp-loading::before { content: ""; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #d6e7e1; border-top-color: var(--mint-deep); animation: rpSpin .8s linear infinite; }
+@keyframes rpSpin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .page-hero { padding: 48px 20px 4px; }
+  .page-hero h1 { font-size: 2rem; }
+  .reports-page { padding-block: 36px 90px; }
+  .rp-modal { padding: 0; }
+  .rp-box { height: 100%; max-width: none; border-radius: 0; }
+  .rp-bar { padding: 12px 12px 12px 18px; }
+  .rp-hide-sm { display: none; }
+}
