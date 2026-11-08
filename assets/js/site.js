@@ -27,7 +27,10 @@
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
     book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
-    menu: '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>'
+    menu: '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
+    leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+    noflame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/><path d="M3 3l18 18"/>',
+    bowl: '<path d="M2 12h20"/><path d="M20 12v1a8 8 0 0 1-16 0v-1"/><path d="M9 8V4"/><path d="M12 8V3"/><path d="M15 8V4"/>'
   };
   D.icon = function (name, cls) {
     return '<svg class="icon ' + (cls || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || "") + "</svg>";
@@ -78,6 +81,33 @@
   D.price = function (r) { return new Array((r.price || 1) + 1).join("₩"); };
   D.mapsLink = function (r) {
     return r.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(r.nameKo + " " + (r.nameEn || ""));
+  };
+  /* Area: Seoul district ("Gangnam") or region outside Seoul ("Busan", "Gyeonggi-do") */
+  D.area = function (r) {
+    var parts = String(r.address || "").split(",").map(function (s) { return s.trim(); });
+    var region = parts[parts.length - 1] || "";
+    if (region === "Seoul") return (parts[0] || "").replace(/ District$| ?-gu$/, "");
+    return region.replace(/^Jeju-do$/, "Jeju");
+  };
+  /* Areas for the filter: Seoul districts (most restaurants first), then other regions */
+  D.areaGroups = function () {
+    var seoul = {}, other = {};
+    D.restaurants.forEach(function (r) {
+      var a = D.area(r), box = /, Seoul$/.test(r.address || "") ? seoul : other;
+      if (a) box[a] = (box[a] || 0) + 1;
+    });
+    function sorted(o) {
+      return Object.keys(o).sort(function (a, b) { return o[b] - o[a] || a.localeCompare(b); })
+        .map(function (k) { return { name: k, count: o[k] }; });
+    }
+    return { seoul: sorted(seoul), other: sorted(other) };
+  };
+  /* Dietary labels (only shown when we're sure) */
+  D.labelsHTML = function (r) {
+    var out = "";
+    if (r.veg) out += '<span class="diet-label">' + D.icon("leaf") + "Vegetarian options</span>";
+    if (r.mild) out += '<span class="diet-label">' + D.icon("noflame") + "Not spicy options</span>";
+    return out ? '<div class="diet-labels">' + out + "</div>" : "";
   };
   D.imageHTML = function (r) {
     return r.image
@@ -219,7 +249,7 @@
       '<div class="r-card-body">' +
         '<div class="r-card-head"><h3><a href="' + href + '">' + D.esc(D.name(r)) + "</a></h3>" + D.heartButton(r.id) + "</div>" +
         '<p class="r-card-desc">' + D.esc(r.desc) + "</p>" +
-        '<div class="r-meta">' + D.price(r) + " · " + D.esc(r.cuisine) + "</div>" +
+        '<div class="r-meta">' + D.price(r) + " · " + D.esc(r.cuisine) + (D.area(r) ? " · " + D.esc(D.area(r)) : "") + "</div>" +
         (r.hours ? '<div class="r-meta">' + D.icon("clock") + "<span>" + D.esc(r.hours) + "</span></div>" : "") +
       "</div></article>";
   };

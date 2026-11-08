@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=202610141259">
+<link rel="stylesheet" href="assets/css/style.css?v=202611080923">
 </head>
 <body data-page="restaurants">
 <header id="site-header"></header>
@@ -23,9 +23,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="assets/js/config.js?v=202610141259"></script>
-<script src="assets/js/restaurants.js?v=202610141259"></script>
-<script src="assets/js/site.js?v=202610141259"></script>
+<script src="assets/js/config.js?v=202611080923"></script>
+<script src="assets/js/restaurants.js?v=202611080923"></script>
+<script src="assets/js/site.js?v=202611080923"></script>
 <script>
 (function () {
   var D = Damye, C = window.DAMYE_CONFIG || {};
@@ -50,9 +50,17 @@
       '<div>' +
         (tag ? '<span class="tag-chip">' + D.esc(tag.label) + '</span>' : '') +
         '<div class="detail-title"><h1>' + D.esc(D.name(r)) + '</h1>' + D.heartButton(r.id) + '</div>' +
-        '<div class="detail-info"><div class="r-meta">' + D.price(r) + ' · ' + D.esc(r.cuisine) + '</div>' +
-          (r.hours ? '<div class="r-meta">' + D.icon("clock") + '<span>' + D.esc(r.hours) + '</span></div>' : '') + '</div>' +
+        '<div class="detail-info"><div class="r-meta">' + D.price(r) + ' · ' + D.esc(r.cuisine) + (D.area(r) ? ' · ' + D.esc(D.area(r)) : '') + '</div>' +
+          (r.hours ? '<div class="r-meta">' + D.icon("clock") + '<span>' + D.esc(r.hours) + '</span></div>' : '') +
+          D.labelsHTML(r) + '</div>' +
         '<p class="detail-desc">' + D.esc(r.desc) + '</p>' +
+        (r.dish ?
+          '<section class="order-card" aria-label="What to order">' +
+            '<div class="order-card-head">' + D.icon("bowl") + 'What to order</div>' +
+            '<div class="order-dish">' + D.esc(r.dish) + '</div>' +
+            (r.dishKo ? '<div class="order-ko"><div class="order-ko-label">Show this to the staff</div><div class="order-ko-text" lang="ko">' + D.esc(r.dishKo) + ' 주세요</div></div>' : '') +
+            (r.alsoTry ? '<div class="order-also"><b>Also try:</b> ' + D.esc(r.alsoTry) + '</div>' : '') +
+          '</section>' : '') +
         '<a class="btn btn-block" href="' + D.esc(D.mapsLink(r)) + '" target="_blank" rel="noopener">View on Google Maps</a>' +
       '</div>' +
     '</div>' +

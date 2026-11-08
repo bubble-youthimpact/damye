@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=202610141259">
+<link rel="stylesheet" href="assets/css/style.css?v=202611080923">
 </head>
 <body data-page="restaurants">
 <header id="site-header"></header>
@@ -23,6 +23,12 @@
     <input id="q" type="search" placeholder="Search for restaurants ..." autocomplete="off">
   </form>
   <div class="chips" id="chips"></div>
+  <div class="filter-row" id="filter-row">
+    <span class="filter-label" id="area-label">Area</span>
+    <span class="area-select" id="area-wrap"><span data-icon="pin"></span><select id="area" aria-labelledby="area-label"></select></span>
+    <button type="button" class="chip" data-diet="veg" aria-pressed="false"><span data-icon="leaf"></span>Vegetarian options</button>
+    <button type="button" class="chip" data-diet="mild" aria-pressed="false"><span data-icon="noflame"></span>Not spicy</button>
+  </div>
   <div class="card-grid" id="grid"></div>
 </div>
 </main>
@@ -31,9 +37,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="assets/js/config.js?v=202610141259"></script>
-<script src="assets/js/restaurants.js?v=202610141259"></script>
-<script src="assets/js/site.js?v=202610141259"></script>
+<script src="assets/js/config.js?v=202611080923"></script>
+<script src="assets/js/restaurants.js?v=202611080923"></script>
+<script src="assets/js/site.js?v=202611080923"></script>
 <script>
 (function () {
   var D = Damye;
@@ -46,6 +52,26 @@
   else if (filter && D.filterByKey(filter)) selected = [filter];
   var q = document.getElementById("q");
   q.value = D.param("q") || "";
+  var areaSel = document.getElementById("area");
+  var diet = { veg: false, mild: false };
+
+  // Area dropdown: all areas, Seoul districts, then other regions
+  (function () {
+    var g = D.areaGroups();
+    function opts(list) { return list.map(function (a) { return '<option value="' + D.esc(a.name) + '">' + D.esc(a.name) + ' (' + a.count + ')</option>'; }).join(""); }
+    areaSel.innerHTML = '<option value="">All areas</option>' +
+      '<optgroup label="Seoul">' + opts(g.seoul) + '</optgroup>' +
+      (g.other.length ? '<optgroup label="Outside Seoul">' + opts(g.other) + '</optgroup>' : '');
+    var a = D.param("area");
+    if (a) areaSel.value = a;
+  })();
+  function paintFilterRow() {
+    document.getElementById("area-wrap").classList.toggle("on", !!areaSel.value);
+    document.querySelectorAll("[data-diet]").forEach(function (b) {
+      var on = diet[b.dataset.diet];
+      b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+    });
+  }
 
   function renderChips() {
     var html = D.FILTERS.map(function (f) {
@@ -58,9 +84,13 @@
 
   function render() {
     var term = q.value.trim().toLowerCase();
+    var area = areaSel.value;
     var list = pool.filter(function (r) {
+      if (area && D.area(r) !== area) return false;
+      if (diet.veg && !r.veg) return false;
+      if (diet.mild && !r.mild) return false;
       if (!term) return true;
-      return [r.nameKo, r.nameEn, r.desc, r.cuisine, r.address].join(" ").toLowerCase().indexOf(term) > -1;
+      return [r.nameKo, r.nameEn, r.desc, r.cuisine, r.address, r.dish, r.dishKo].join(" ").toLowerCase().indexOf(term) > -1;
     });
     if (selected.length) {
       // Show places matching any selected filter; best matches first.
@@ -80,7 +110,7 @@
   document.getElementById("chips").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.reset) { selected = []; q.value = ""; }
+    if (b.dataset.reset) { selected = []; q.value = ""; areaSel.value = ""; diet.veg = diet.mild = false; paintFilterRow(); }
     else {
       var k = b.dataset.key, i = selected.indexOf(k);
       if (i > -1) selected.splice(i, 1); else selected.push(k);
@@ -88,9 +118,13 @@
     renderChips(); render();
   });
   q.addEventListener("input", render);
+  areaSel.addEventListener("change", function () { paintFilterRow(); render(); });
+  document.querySelectorAll("[data-diet]").forEach(function (b) {
+    b.addEventListener("click", function () { diet[b.dataset.diet] = !diet[b.dataset.diet]; paintFilterRow(); render(); });
+  });
   document.getElementById("search-form").addEventListener("submit", function (e) { e.preventDefault(); render(); });
 
-  renderChips(); render();
+  renderChips(); paintFilterRow(); render();
 
   // Arriving from a category, quiz result or search: start at the very top
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";

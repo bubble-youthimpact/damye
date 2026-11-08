@@ -250,6 +250,17 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .chip.on { background: var(--mint); border-color: var(--mint); color: #fff; }
 .chip-reset { color: var(--red); }
 .chip-reset .icon { color: var(--red); }
+.filter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: -6px 0 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.filter-row .filter-label { font-size: .9rem; font-weight: 600; color: var(--muted); margin-right: 2px; }
+.area-select { position: relative; display: inline-flex; align-items: center; }
+.area-select .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; pointer-events: none; color: var(--mint-deep); z-index: 1; }
+.area-select select {
+  appearance: none; -webkit-appearance: none; font: inherit; font-size: .97rem; font-weight: 500; color: inherit;
+  padding: 10px 38px 10px 40px; border: 1px solid #e3e1da; border-radius: 999px; cursor: pointer; max-width: 100%;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23131D1A' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 16px center;
+}
+.area-select select:hover { border-color: var(--mint); }
+.area-select.on select { border-color: var(--mint); background-color: var(--mint-soft); }
 .empty { text-align: center; padding: 70px 20px; color: var(--muted); grid-column: 1 / -1; }
 
 /* ---------- Restaurant detail ---------- */
@@ -262,6 +273,18 @@ textarea.input { height: 150px; padding: 14px 16px; resize: vertical; }
 .detail-title h1 { font-size: 2.2rem; font-weight: 500; line-height: 1.25; }
 .detail-info { padding-bottom: 22px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
 .detail-desc { font-size: 1rem; line-height: 1.6; margin-bottom: 30px; }
+.diet-labels { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.diet-label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--mint-soft); color: var(--mint-deep); font-size: .88rem; font-weight: 600; }
+.diet-label .icon { width: 16px; height: 16px; }
+.order-card { border: 1px solid var(--border); border-radius: 18px; background: #fff; padding: 20px 22px; margin-bottom: 26px; }
+.order-card-head { display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mint-deep); margin-bottom: 10px; }
+.order-card-head .icon { width: 18px; height: 18px; }
+.order-dish { font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
+.order-ko { margin-top: 12px; padding: 14px 16px; border-radius: 12px; background: var(--mint-soft); }
+.order-ko-label { font-size: .8rem; color: var(--muted); margin-bottom: 2px; }
+.order-ko-text { font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--dark); word-break: keep-all; }
+.order-also { margin-top: 12px; font-size: .95rem; color: var(--muted); }
+.order-also b { color: var(--dark); font-weight: 600; }
 .detail h2 { font-size: 1.9rem; font-weight: 500; margin: 80px 0 18px; }
 #map { width: 100%; height: 380px; background: #ecebe6; }
 .map-missing { padding: 60px 20px; text-align: center; background: #f3f1ea; color: var(--muted); }
