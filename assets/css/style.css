@@ -675,3 +675,7 @@ body.modal-open { overflow: hidden; }
 .quiz-intro > *, .quiz-picker-head > * { margin: 0 !important; }
 .quiz-intro h1, .quiz-picker-head h1 { line-height: 1.15; }
 .quiz-row { gap: 32px; }
+
+/* Back link sits a little further from the page header; intro text spans the full quiz width */
+.quiz-back-link { margin-bottom: 32px; }
+.quiz-intro p { max-width: none; }
