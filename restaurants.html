@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=202611080950">
+<link rel="stylesheet" href="assets/css/style.css?v=202611150011">
 </head>
 <body data-page="restaurants">
 <header id="site-header"></header>
@@ -26,6 +26,8 @@
   <div class="filter-row" id="filter-row">
     <span class="filter-label" id="area-label">Area</span>
     <span class="area-select" id="area-wrap"><span data-icon="pin"></span><select id="area" aria-labelledby="area-label"></select></span>
+    <span class="filter-label" id="cuisine-label">Cuisine</span>
+    <span class="area-select" id="cuisine-wrap"><span data-icon="utensils"></span><select id="cuisine" aria-labelledby="cuisine-label"></select></span>
     <button type="button" class="chip" data-diet="veg" aria-pressed="false"><span data-icon="leaf"></span>Vegetarian options</button>
     <button type="button" class="chip" data-diet="mild" aria-pressed="false"><span data-icon="noflame"></span>Not spicy</button>
   </div>
@@ -37,9 +39,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="assets/js/config.js?v=202611080950"></script>
-<script src="assets/js/restaurants.js?v=202611080950"></script>
-<script src="assets/js/site.js?v=202611080950"></script>
+<script src="assets/js/config.js?v=202611150011"></script>
+<script src="assets/js/restaurants.js?v=202611150011"></script>
+<script src="assets/js/site.js?v=202611150011"></script>
 <script>
 (function () {
   var D = Damye;
@@ -54,6 +56,32 @@
   q.value = D.param("q") || "";
   var areaSel = document.getElementById("area");
   var diet = { veg: false, mild: false };
+  var cuisineSel = document.getElementById("cuisine");
+
+  // Cuisine dropdown: broad groups built from each restaurant's "cuisine" field
+  var CUISINES = [
+    { key: "korean",   label: "Korean",          match: ["Korean", "Korean-Fusion"] },
+    { key: "chinese",  label: "Chinese",         match: ["Chinese"] },
+    { key: "japanese", label: "Japanese",        match: ["Japanese"] },
+    { key: "asian",    label: "Other Asian",     match: ["Thai", "Asian", "Vietnamese", "Indian"] },
+    { key: "western",  label: "Western",         match: ["Western", "Mexican", "Brunch", "Italian", "American", "French"] },
+    { key: "cafe",     label: "Café & Dessert",  match: ["Cafe", "Dessert", "Bakery"] }
+  ];
+  function cuisineKey(r) {
+    for (var i = 0; i < CUISINES.length; i++) if (CUISINES[i].match.indexOf(r.cuisine) > -1) return CUISINES[i].key;
+    return "other";
+  }
+  (function () {
+    var count = {};
+    D.restaurants.forEach(function (r) { var k = cuisineKey(r); count[k] = (count[k] || 0) + 1; });
+    var list = CUISINES.filter(function (c) { return count[c.key]; });
+    if (count.other) list.push({ key: "other", label: "Other" });
+    cuisineSel.innerHTML = '<option value="">All cuisines</option>' + list.map(function (c) {
+      return '<option value="' + c.key + '">' + D.esc(c.label) + ' (' + count[c.key] + ')</option>';
+    }).join("");
+    var c = D.param("cuisine");
+    if (c && count[c]) cuisineSel.value = c;
+  })();
 
   // Area dropdown: all areas, Seoul districts, then other regions
   (function () {
@@ -67,6 +95,7 @@
   })();
   function paintFilterRow() {
     document.getElementById("area-wrap").classList.toggle("on", !!areaSel.value);
+    document.getElementById("cuisine-wrap").classList.toggle("on", !!cuisineSel.value);
     document.querySelectorAll("[data-diet]").forEach(function (b) {
       var on = diet[b.dataset.diet];
       b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
@@ -84,9 +113,10 @@
 
   function render() {
     var term = q.value.trim().toLowerCase();
-    var area = areaSel.value;
+    var area = areaSel.value, cuisine = cuisineSel.value;
     var list = pool.filter(function (r) {
       if (area && D.area(r) !== area) return false;
+      if (cuisine && cuisineKey(r) !== cuisine) return false;
       if (diet.veg && !r.veg) return false;
       if (diet.mild && !r.mild) return false;
       if (!term) return true;
@@ -110,7 +140,7 @@
   document.getElementById("chips").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.reset) { selected = []; q.value = ""; areaSel.value = ""; diet.veg = diet.mild = false; paintFilterRow(); }
+    if (b.dataset.reset) { selected = []; q.value = ""; areaSel.value = ""; cuisineSel.value = ""; diet.veg = diet.mild = false; paintFilterRow(); }
     else {
       var k = b.dataset.key, i = selected.indexOf(k);
       if (i > -1) selected.splice(i, 1); else selected.push(k);
@@ -119,6 +149,7 @@
   });
   q.addEventListener("input", render);
   areaSel.addEventListener("change", function () { paintFilterRow(); render(); });
+  cuisineSel.addEventListener("change", function () { paintFilterRow(); render(); });
   document.querySelectorAll("[data-diet]").forEach(function (b) {
     b.addEventListener("click", function () { diet[b.dataset.diet] = !diet[b.dataset.diet]; paintFilterRow(); render(); });
   });

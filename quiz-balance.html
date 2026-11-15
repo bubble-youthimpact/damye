@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korea Food Balance Game — Damye</title>
+<meta name="description" content="Pick your side in 20 fun Korean food dilemmas.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=202611150011">
+</head>
+<body data-page="quiz">
+<header id="site-header"></header>
+<main>
+<div class="container container-narrow quiz-page">
+  <a class="quiz-back-link" href="quiz">‹ All quizzes</a>
+  <section class="quiz-row">
+    <div class="quiz-intro">
+      <span class="quiz-label">BALANCE GAME</span>
+      <h1>Korea Food Balance Game</h1>
+      <p>Pick your side in 20 fun food dilemmas and find out what kind of eater you really are.</p>
+    </div>
+    <div>
+<div id="damye-balance">
+<style>
+  #damye-balance {
+    --accent: #95C4B8;
+    --accent-dark: #7AAE9F;
+    --accent-deep: #3F6F63;
+    --accent-soft: #EAF3F0;
+    --bg: #fbfaf5;
+    --card: #ffffff;
+    --text: #1f1f1f;
+    --muted: #666666;
+    --border: #E4E1D8;
+    font-family: 'Figtree', 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 8px 0;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  #damye-balance * { box-sizing: border-box; font-family: inherit; margin: 0; }
+  #damye-balance button { cursor: pointer; }
+  #damye-balance button:focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 2px; }
+
+  #damye-balance .db-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+  }
+  #damye-balance .db-screen { display: none; }
+  #damye-balance .db-screen.active { display: block; }
+
+  /* Buttons */
+  #damye-balance .db-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 30px; border-radius: 999px; border: 1.5px solid var(--accent);
+    background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600;
+    transition: background-color .2s, border-color .2s;
+  }
+  #damye-balance .db-btn:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  #damye-balance .db-btn-ghost { background: #fff; color: var(--text); border-color: var(--border); }
+  #damye-balance .db-btn-ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  /* Intro */
+  #damye-balance .db-intro { text-align: center; }
+  #damye-balance .db-icons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+  #damye-balance .db-icons span {
+    width: 58px; height: 58px; border-radius: 50%; background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+  }
+  #damye-balance .db-intro h1 { font-size: 2rem; font-weight: 800; line-height: 1.25; margin-bottom: 14px; }
+  #damye-balance .db-intro p { color: var(--muted); font-size: 1.05rem; max-width: 500px; margin: 0 auto 30px; }
+  #damye-balance .db-meta { margin-top: 16px; font-size: .9rem; color: var(--muted); }
+
+  /* Question */
+  #damye-balance .db-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  #damye-balance .db-back {
+    background: none; border: none; color: var(--muted); font-size: .95rem; font-weight: 500;
+    padding: 6px 4px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  #damye-balance .db-back:hover { color: var(--text); }
+  #damye-balance .db-counter { font-size: .9rem; font-weight: 600; color: var(--muted); }
+  #damye-balance .db-progress { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 28px; }
+  #damye-balance .db-progress-bar { height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+  #damye-balance .db-question { font-size: 1.35rem; font-weight: 700; line-height: 1.4; margin-bottom: 24px; }
+
+  #damye-balance .db-options { display: flex; flex-direction: column; gap: 12px; }
+  #damye-balance .db-option {
+    text-align: left; width: 100%; padding: 16px 20px; background: #fff;
+    border: 1.5px solid var(--border); border-radius: 14px;
+    font-size: 1rem; font-weight: 500; color: var(--text);
+    transition: border-color .15s, background-color .15s;
+  }
+  #damye-balance .db-option:hover { border-color: var(--accent); background: var(--accent-soft); }
+  #damye-balance .db-option.selected { border-color: var(--accent-dark); background: var(--accent-soft); font-weight: 600; }
+  #damye-balance .db-option-emoji { font-size: 1em; margin-right: 10px; }
+
+  /* Result */
+  #damye-balance .db-result-head { text-align: center; margin-bottom: 28px; }
+  #damye-balance .db-result-head .db-big {
+    width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%;
+    background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 3.2rem;
+  }
+  #damye-balance .db-result-head h2 { font-size: 1.9rem; font-weight: 800; line-height: 1.25; margin-bottom: 8px; }
+  #damye-balance .db-result-head p { color: var(--muted); font-size: 1.02rem; }
+  #damye-balance .db-recap { border-top: 1px solid var(--border); }
+  #damye-balance .db-recap-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  #damye-balance .db-recap-q { font-size: .92rem; color: var(--muted); margin-bottom: 4px; }
+  #damye-balance .db-recap-a { font-size: 1.02rem; font-weight: 600; color: var(--accent-deep); }
+  #damye-balance .db-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
+  #damye-balance .db-actions-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  @media (max-width: 600px) {
+    #damye-balance .db-card { padding: 26px 18px; border-radius: 20px; }
+    #damye-balance .db-intro h1 { font-size: 1.6rem; }
+    #damye-balance .db-question { font-size: 1.15rem; }
+    #damye-balance .db-result-head h2 { font-size: 1.6rem; }
+    #damye-balance .db-btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #damye-balance * { transition: none !important; }
+  }
+</style>
+
+  <!-- Intro -->
+  <div class="db-card db-screen db-intro active" data-screen="intro">
+    <div class="db-icons" aria-hidden="true">
+      <span>🍗</span><span>🍜</span><span>🍲</span><span>🥩</span><span>🌶️</span><span>🍰</span>
+    </div>
+    <h1>The Korean food balance game</h1>
+    <p>No right answers, just your honest food choices. Pick the one that sounds most like you.</p>
+    <button class="db-btn" data-action="start">Start the game</button>
+    <div class="db-meta" data-el="meta"></div>
+  </div>
+
+  <!-- Question -->
+  <div class="db-card db-screen" data-screen="quiz">
+    <div class="db-top">
+      <button class="db-back" data-action="back">‹ Back</button>
+      <span class="db-counter" data-el="counter"></span>
+    </div>
+    <div class="db-progress"><div class="db-progress-bar" data-el="progress"></div></div>
+    <h2 class="db-question" data-el="question"></h2>
+    <div class="db-options" data-el="options"></div>
+  </div>
+
+  <!-- Result -->
+  <div class="db-card db-screen" data-screen="result">
+    <div class="db-result-head">
+      <div class="db-big" aria-hidden="true">🍽️</div>
+      <h2>This is how you eat</h2>
+      <p>Here are all your picks. Send them to a friend and see how different you are.</p>
+    </div>
+    <div class="db-recap" data-el="recap"></div>
+    <div class="db-actions">
+      <button class="db-btn" data-action="explore">Explore restaurants</button>
+      <div class="db-actions-row">
+        <button class="db-btn db-btn-ghost" data-action="share">Share my picks</button>
+        <button class="db-btn db-btn-ghost" data-action="restart">Play again</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  /* ========== SETTINGS (edit these) ========== */
+  var CONFIG = {
+    SHUFFLE_QUESTIONS: false,       // true = questions appear in random order
+    RESTAURANTS_PAGE: "restaurants"
+  };
+
+  /*
+    QUESTIONS
+    Each option: "text"  or  ["text", "emoji"]
+    The emoji appears small on the left of the answer.
+  */
+  var QUESTIONS = [
+    { q: "You wake up at 2 a.m. feeling extremely hungry. What do you do?", o: [
+      "Order fried chicken immediately",
+      "Make instant ramen with every topping available",
+      "Search for a restaurant still open",
+      "Ignore it and dream about breakfast" ] },
+    { q: "Your friend says, “I know a place,” and leads you into a dark alley. What are you thinking?", o: [
+      "“This is definitely going to be amazing.”",
+      "“Does this place even have a menu?”",
+      "“I hope it’s not expensive.”",
+      "“Should I share my location with someone?”" ] },
+    { q: "You only have ₩10,000 left. What are you choosing?", o: [
+      ["Tteokbokki and fried snacks", "🌶️"],
+      ["A steaming bowl of gukbap", "🍲"],
+      ["Convenience-store ramen and snacks", "🍜"],
+      ["One beautiful slice of cake and coffee", "🍰"] ] },
+    { q: "You could eat only one Korean dish for an entire month. Which one survives?", o: [
+      ["Korean barbecue", "🥩"],
+      ["Kimchi jjigae", "🥘"],
+      ["Tteokbokki", "🌶️"],
+      ["Bibimbap", "🍚"] ] },
+    { q: "Your food arrives, but your friend is still taking photos. What do you do?", o: [
+      "Wait patiently",
+      "Secretly take one bite",
+      "Help them find the perfect angle",
+      "Say, “The food is getting cold!”" ] },
+    { q: "Which restaurant red flag can you forgive?", o: [
+      "A long waiting line",
+      "A tiny and confusing menu",
+      "An old-fashioned interior",
+      "Slightly expensive prices",
+      "A location that is difficult to find" ] },
+    { q: "Which food crime is the worst?", o: [
+      "Eating pizza with a knife and fork",
+      "Leaving the last piece without asking",
+      "Taking food from someone else’s plate",
+      "Saying “I’m not hungry” and then eating half your food" ] },
+    { q: "You find a restaurant with no sign, no reviews, and only three menu items. Are you going in?", o: [
+      "Absolutely—it could be legendary",
+      "Only if locals are inside",
+      "Only if my friend goes first",
+      "No reviews? No chance" ] },
+    { q: "What is your role at a group dinner?", o: [
+      "The person who chooses the restaurant",
+      "The person who orders for everyone",
+      "The person who takes all the photos",
+      "The person who eats everything left on the table" ] },
+    { q: "Choose one unlimited refill forever.", o: [
+      "Rice",
+      "Side dishes",
+      "Meat",
+      "Drinks",
+      "Dessert" ] },
+    { q: "Your favorite restaurant suddenly becomes viral. How do you react?", o: [
+      "I’m proud that everyone discovered it",
+      "I’m annoyed because the waiting line will be longer",
+      "I tell everyone I knew it first",
+      "I immediately search for a new hidden gem" ] },
+    { q: "Which sound makes you the hungriest?", o: [
+      "Meat sizzling on a grill",
+      "Stew bubbling in a stone pot",
+      "Fried chicken crunching",
+      "A drink being poured over ice" ] },
+    { q: "You are given a free plane ticket, but the destination is based on food. Where are you going?", o: [
+      ["Tokyo for sushi and ramen", "🍣"],
+      ["Bangkok for street food", "🍢"],
+      ["Naples for pizza and pasta", "🍕"],
+      ["Jeju for seafood and black pork", "🐟"] ] },
+    { q: "Which restaurant superpower would you choose?", o: [
+      "Never having to wait in line",
+      "Getting 50% off every meal",
+      "Knowing exactly what to order",
+      "Always receiving the best seat",
+      "Being able to eat without getting full" ] },
+    { q: "Your meal is delicious, but the portion is tiny. What is your honest reaction?", o: [
+      "Quality matters more than quantity",
+      "I’m ordering another dish",
+      "Delicious, but I’m never coming back",
+      "Time to find dessert" ] },
+    { q: "Choose your perfect rainy-day meal.", o: [
+      ["Pajeon and makgeolli", "🥞"],
+      ["Spicy ramen", "🍜"],
+      ["Kalguksu", "🍲"],
+      ["Kimchi jjigae", "🥘"] ] },
+    { q: "What is the strongest sign that a restaurant will be good?", o: [
+      "A long line of local customers",
+      "A short menu",
+      "An elderly owner cooking in the kitchen",
+      "A smell you can notice from outside",
+      "Photos all over social media" ] },
+    { q: "Someone says, “Let’s just share everything.” What does that mean to you?", o: [
+      "Perfect—I want to taste everything",
+      "Fine, but we need clear boundaries",
+      "I’m protecting my favorite dish",
+      "I would rather order my own food" ] },
+    { q: "What would convince you to travel one hour for a restaurant?", o: [
+      "A dish available nowhere else",
+      "A recommendation from someone I trust",
+      "An incredible view or atmosphere",
+      "Huge portions at a low price",
+      "Nothing—food should come to me" ] },
+    { q: "Complete the sentence: “A perfect meal must end with…”", o: [
+      "Dessert",
+      "Fried rice",
+      "Coffee",
+      "One more drink",
+      "Unbuttoning my jeans" ] }
+  ];
+
+  /* ========== GAME LOGIC (no need to edit below) ========== */
+  var root = document.getElementById("damye-balance");
+  function el(name) { return root.querySelector('[data-el="' + name + '"]'); }
+  function optText(opt) { return Array.isArray(opt) ? opt[0] : opt; }
+  function optEmoji(opt) { return Array.isArray(opt) ? opt[1] : ""; }
+
+  var total = QUESTIONS.length;
+  var state = { order: [], answers: [], current: 0 };
+  el("meta").textContent = total + " questions · about 2 minutes";
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function show(name) {
+    root.querySelectorAll(".db-screen").forEach(function (s) {
+      s.classList.toggle("active", s.getAttribute("data-screen") === name);
+    });
+    if (root.getBoundingClientRect().top < 0) root.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function start() {
+    var idx = QUESTIONS.map(function (_, i) { return i; });
+    state.order = CONFIG.SHUFFLE_QUESTIONS ? shuffle(idx) : idx;
+    state.answers = [];
+    state.current = 0;
+    renderQuestion();
+    show("quiz");
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.order[state.current]];
+    el("counter").textContent = "Question " + (state.current + 1) + " of " + total;
+    el("progress").style.width = (state.current / total * 100) + "%";
+    el("question").textContent = q.q;
+
+    var box = el("options");
+    box.innerHTML = "";
+    q.o.forEach(function (opt, oi) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "db-option";
+      if (optEmoji(opt)) {
+        var icon = document.createElement("span");
+        icon.className = "db-option-emoji";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = optEmoji(opt);
+        btn.appendChild(icon);
+      }
+      btn.appendChild(document.createTextNode(optText(opt)));
+      if (state.answers[state.current] === oi) btn.classList.add("selected");
+      btn.addEventListener("click", function () { choose(oi, btn); });
+      box.appendChild(btn);
+    });
+  }
+
+  var locked = false;
+  function choose(oi, btn) {
+    if (locked) return;
+    locked = true;
+    state.answers[state.current] = oi;
+    el("options").querySelectorAll("button").forEach(function (b) { b.classList.remove("selected"); });
+    btn.classList.add("selected");
+    setTimeout(function () {
+      locked = false;
+      state.current++;
+      if (state.current >= total) showResult();
+      else renderQuestion();
+    }, 280);
+  }
+
+  function back() {
+    if (state.current === 0) { show("intro"); return; }
+    state.current--;
+    renderQuestion();
+  }
+
+  function showResult() {
+    var oldBox = root.querySelector(".share-fallback"); if (oldBox) oldBox.remove();
+    var recap = el("recap");
+    recap.innerHTML = "";
+    state.order.forEach(function (qi, i) {
+      var q = QUESTIONS[qi];
+      var opt = q.o[state.answers[i]];
+      var item = document.createElement("div");
+      item.className = "db-recap-item";
+      var qEl = document.createElement("div");
+      qEl.className = "db-recap-q";
+      qEl.textContent = (i + 1) + ". " + q.q;
+      var aEl = document.createElement("div");
+      aEl.className = "db-recap-a";
+      aEl.textContent = (optEmoji(opt) ? optEmoji(opt) + " " : "") + optText(opt);
+      item.appendChild(qEl); item.appendChild(aEl);
+      recap.appendChild(item);
+    });
+    el("progress").style.width = "100%";
+    show("result");
+  }
+
+  function share(btn) {
+    var text = "I just played Damye’s Korean food balance game. Can you guess my picks? Play here:";
+    var link = window.location.href.split("?")[0];
+    Damye.share(btn, "Damye Food Balance Game", text, link);
+  }
+
+  root.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t || !root.contains(t)) return;
+    var act = t.getAttribute("data-action");
+    if (act === "start" || act === "restart") start();
+    else if (act === "back") back();
+    else if (act === "explore") window.location.href = new URL(CONFIG.RESTAURANTS_PAGE, window.location.href).href;
+    else if (act === "share") share(t);
+  });
+})();
+</script>
+</div>
+    </div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"><div class="container footer-inner"><div><a class="logo" href="./"><span class="logo-text">Damye</span></a><p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div><div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div><div><h4>Social Channels</h4><a class="social" href="https://instagram.com/damye.kr" target="_blank" rel="noopener"><svg class="icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@damye.kr</a></div></div></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js?v=202611150011"></script>
+<script src="assets/js/restaurants.js?v=202611150011"></script>
+<script src="assets/js/site.js?v=202611150011"></script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean Food World Cup — Damye</title>
+<meta name="description" content="32 Korean dishes, one champion. Which Korean food wins your heart?">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=202611150011">
+</head>
+<body data-page="quiz">
+<header id="site-header"></header>
+<main>
+<div class="container container-narrow quiz-page">
+  <a class="quiz-back-link" href="quiz">‹ All quizzes</a>
+  <section class="quiz-row">
+    <div class="quiz-intro">
+      <span class="quiz-label">WORLD CUP</span>
+      <h1>Korean Food World Cup 🏆</h1>
+      <p>32 dishes. One champion. Pick your favorite in each match until only one Korean food is left standing.</p>
+    </div>
+    <div>
+<div id="damye-wc" class="qz">
+  <div class="qz-card qz-screen qz-intro active" data-screen="intro">
+    <div class="qz-icons" aria-hidden="true"><span>🥓</span><span>🍢</span><span>🥘</span><span>🍗</span><span>🥟</span><span>🏆</span></div>
+    <h2>Which Korean food wins your heart?</h2>
+    <p>Two dishes go head to head in every match. Tap the one you’d rather eat. Winners move on to the next round.</p>
+    <button class="qz-btn" data-action="start">Start the World Cup</button>
+    <div class="qz-meta">Round of 32 → Round of 16 → Quarterfinals → Semifinals → Final</div>
+  </div>
+
+  <div class="qz-card qz-screen" data-screen="quiz">
+    <div class="qz-top">
+      <button class="qz-back" data-action="back" data-el="back">‹ Back</button>
+      <span class="qz-counter" data-el="counter"></span>
+    </div>
+    <div class="qz-progress"><div class="qz-progress-bar" data-el="progress"></div></div>
+    <div style="text-align:center;margin-bottom:22px"><span class="wc-round" data-el="round"></span></div>
+    <div class="wc-match" data-el="match"></div>
+  </div>
+
+  <div class="qz-card qz-screen" data-screen="result">
+    <div class="qz-result-head">
+      <div class="qz-big" aria-hidden="true" data-el="r-emoji"></div>
+      <div class="qz-pre">My Korean food champion is</div>
+      <h2 data-el="r-name"></h2>
+      <div class="qz-sub" data-el="r-ko"></div>
+      <p data-el="r-desc"></p>
+    </div>
+    <div style="text-align:center">
+      <div class="qz-pre">Runner-up: <strong data-el="r-runner"></strong></div>
+      <div class="qz-pre" style="margin-top:18px">Your final four</div>
+      <div class="wc-final4" data-el="r-final4"></div>
+    </div>
+    <div class="qz-actions">
+      <button class="qz-btn" data-action="find" data-el="find" hidden></button>
+      <div class="qz-actions-row">
+        <button class="qz-btn qz-btn-ghost" data-action="share">Share my champion</button>
+        <button class="qz-btn qz-btn-ghost" data-action="restart">Play again</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  /* ========== SETTINGS (edit these) ========== */
+  var CONFIG = { RESTAURANTS_PAGE: "restaurants" };
+
+  /*
+    DISHES — listed in Round of 32 order: 1 vs 2, 3 vs 4, ...
+    search: words used to find matching restaurants on the site (first one with results is used)
+  */
+  var DISHES = [
+    { n: "Samgyeopsal", ko: "삼겹살", e: "🥓", d: "Grilled pork belly", search: ["samgyeopsal", "pork belly"] },
+    { n: "Bulgogi", ko: "불고기", e: "🥩", d: "Marinated beef", search: ["bulgogi"] },
+    { n: "Tteokbokki", ko: "떡볶이", e: "🍢", d: "Spicy rice cakes", search: ["tteokbokki"] },
+    { n: "Rabokki", ko: "라볶이", e: "🍜", d: "Tteokbokki with ramen", search: ["rabokki", "tteokbokki"] },
+    { n: "Bibimbap", ko: "비빔밥", e: "🥗", d: "Mixed rice bowl", search: ["bibimbap"] },
+    { n: "Dolsot bibimbap", ko: "돌솥비빔밥", e: "🔥", d: "Hot stone pot bibimbap", search: ["dolsot", "bibimbap"] },
+    { n: "Kimchi jjigae", ko: "김치찌개", e: "🥘", d: "Kimchi stew", search: ["kimchi jjigae", "kimchi stew"] },
+    { n: "Doenjang jjigae", ko: "된장찌개", e: "🍲", d: "Soybean paste stew", search: ["doenjang"] },
+    { n: "Korean fried chicken", ko: "치킨", e: "🍗", d: "Crispy fried chicken", search: ["fried chicken"] },
+    { n: "Dakgalbi", ko: "닭갈비", e: "🌶️", d: "Spicy stir-fried chicken", search: ["dakgalbi"] },
+    { n: "Naengmyeon", ko: "냉면", e: "🧊", d: "Cold noodles", search: ["naengmyeon"] },
+    { n: "Kalguksu", ko: "칼국수", e: "🍜", d: "Knife-cut noodle soup", search: ["kalguksu"] },
+    { n: "Mandu", ko: "만두", e: "🥟", d: "Dumplings", search: ["mandu", "dumpling"] },
+    { n: "Gimbap", ko: "김밥", e: "🍙", d: "Seaweed rice rolls", search: ["gimbap", "kimbap"] },
+    { n: "Bossam", ko: "보쌈", e: "🥬", d: "Boiled pork wraps", search: ["bossam"] },
+    { n: "Jokbal", ko: "족발", e: "🐷", d: "Braised pig’s trotters", search: ["jokbal"] },
+    { n: "Japchae", ko: "잡채", e: "🍝", d: "Stir-fried glass noodles", search: ["japchae"] },
+    { n: "Buchimgae", ko: "부침개", e: "🥞", d: "Savory pancakes", search: ["jeon", "pancake"] },
+    { n: "Sundubu jjigae", ko: "순두부찌개", e: "🫕", d: "Soft tofu stew", search: ["sundubu", "soft tofu"] },
+    { n: "Budae jjigae", ko: "부대찌개", e: "🌭", d: "Army stew", search: ["budae"] },
+    { n: "Galbitang", ko: "갈비탕", e: "🍖", d: "Beef short rib soup", search: ["galbitang"] },
+    { n: "Samgyetang", ko: "삼계탕", e: "🐔", d: "Ginseng chicken soup", search: ["samgyetang"] },
+    { n: "Jjajangmyeon", ko: "짜장면", e: "🥢", d: "Black bean sauce noodles", search: ["jjajang"] },
+    { n: "Jjamppong", ko: "짬뽕", e: "🦐", d: "Spicy seafood noodle soup", search: ["jjamppong"] },
+    { n: "Hotteok", ko: "호떡", e: "🥮", d: "Sweet filled pancakes", search: ["hotteok"] },
+    { n: "Bungeoppang", ko: "붕어빵", e: "🐟", d: "Fish-shaped pastries", search: ["bungeoppang"] },
+    { n: "Galbi", ko: "갈비", e: "🔥", d: "Grilled ribs", search: ["galbi"] },
+    { n: "Jeyuk bokkeum", ko: "제육볶음", e: "🐖", d: "Spicy stir-fried pork", search: ["jeyuk"] },
+    { n: "Kimchi fried rice", ko: "김치볶음밥", e: "🍳", d: "Fried rice with kimchi", search: ["kimchi fried rice", "fried rice"] },
+    { n: "Dakjuk", ko: "닭죽", e: "🥣", d: "Chicken rice porridge", search: ["dakjuk", "porridge"] },
+    { n: "Gukbap", ko: "국밥", e: "🍚", d: "Rice soup", search: ["gukbap"] },
+    { n: "Seolleongtang", ko: "설렁탕", e: "🥛", d: "Ox bone soup", search: ["seolleongtang"] }
+  ];
+  var ROUNDS = { 32: "Round of 32", 16: "Round of 16", 8: "Quarterfinals", 4: "Semifinals", 2: "Final" };
+  /* ========== END SETTINGS ========== */
+
+  var root = document.getElementById("damye-wc");
+  var state, history;
+  function el(n) { return root.querySelector('[data-el="' + n + '"]'); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function show(name) {
+    root.querySelectorAll(".qz-screen").forEach(function (s) { s.classList.toggle("active", s.getAttribute("data-screen") === name); });
+    var top = root.getBoundingClientRect().top + window.scrollY - 90;
+    if (window.scrollY > top) window.scrollTo({ top: top, behavior: "smooth" });
+  }
+  function copy(s) { return { field: s.field.slice(), winners: s.winners.slice(), m: s.m, final4: s.final4.slice(), runner: s.runner }; }
+
+  function start() {
+    state = { field: DISHES.map(function (_, i) { return i; }), winners: [], m: 0, final4: [], runner: null };
+    history = [];
+    render(); show("quiz");
+  }
+
+  function render() {
+    var size = state.field.length, matches = size / 2;
+    var a = DISHES[state.field[state.m * 2]], b = DISHES[state.field[state.m * 2 + 1]];
+    el("round").textContent = ROUNDS[size];
+    el("counter").textContent = size === 2 ? "" : "Match " + (state.m + 1) + " of " + matches;
+    el("back").hidden = history.length === 0;
+    var done = 32 - size + state.m;   // matches played so far (31 total)
+    el("progress").style.width = (done / 31 * 100) + "%";
+    function card(d, k) {
+      return '<button class="wc-pick" data-action="pick" data-k="' + k + '"><span class="wc-emoji" aria-hidden="true">' + d.e + '</span><span class="wc-pick-text"><span class="wc-name">' + esc(d.n) + '</span><span class="wc-ko">' + esc(d.ko) + '</span><span class="wc-desc">' + esc(d.d) + "</span></span></button>";
+    }
+    el("match").innerHTML = card(a, 0) + '<div class="wc-vs" aria-hidden="true">VS</div>' + card(b, 1);
+  }
+
+  function pick(k) {
+    history.push(copy(state));
+    var size = state.field.length;
+    var win = state.field[state.m * 2 + k], lose = state.field[state.m * 2 + 1 - k];
+    state.winners.push(win);
+    if (size === 2) { state.runner = lose; return result(win); }
+    state.m++;
+    if (state.m === size / 2) {
+      if (size === 8) state.final4 = state.winners.slice();
+      state.field = state.winners; state.winners = []; state.m = 0;
+    }
+    render();
+  }
+
+  function back() {
+    if (!history.length) return;
+    state = history.pop();
+    render(); show("quiz");
+  }
+
+  function findTerm(d) {
+    var list = window.DAMYE_RESTAURANTS || [];
+    for (var i = 0; i < d.search.length; i++) {
+      var term = d.search[i].toLowerCase();
+      var n = list.filter(function (r) {
+        return [r.nameKo, r.nameEn, r.desc, r.cuisine, r.address, r.dish, r.dishKo].join(" ").toLowerCase().indexOf(term) > -1;
+      }).length;
+      if (n) return { term: d.search[i], n: n };
+    }
+    return null;
+  }
+
+  function result(win) {
+    var d = DISHES[win];
+    state.champion = win;
+    el("r-emoji").textContent = d.e;
+    el("r-name").textContent = d.n + "! 🏆";
+    el("r-ko").textContent = d.ko + " · " + d.d;
+    el("r-desc").textContent = "Out of 32 Korean dishes, this is the one you kept choosing.";
+    el("r-runner").textContent = DISHES[state.runner].n;
+    el("r-final4").innerHTML = state.final4.map(function (i) { return "<span>" + DISHES[i].e + " " + esc(DISHES[i].n) + "</span>"; }).join("");
+    var f = findTerm(d), btn = el("find");
+    if (f) {
+      btn.textContent = "Find restaurants for " + d.n;
+      btn.setAttribute("data-term", f.term);
+      btn.hidden = false;
+    } else btn.hidden = true;
+    el("progress").style.width = "100%";
+    show("result");
+  }
+
+  function share(btn) {
+    var d = DISHES[state.champion];
+    var text = "My Korean food champion is " + d.n + "! 🏆 Play the Korean Food World Cup on Damye:";
+    Damye.share(btn, "Korean Food World Cup", text, window.location.href.split("?")[0]);
+  }
+
+  root.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-action]");
+    if (!t || !root.contains(t)) return;
+    var act = t.getAttribute("data-action");
+    if (act === "start" || act === "restart") start();
+    else if (act === "pick") pick(Number(t.getAttribute("data-k")));
+    else if (act === "back") back();
+    else if (act === "share") share(t);
+    else if (act === "find") window.location.href = CONFIG.RESTAURANTS_PAGE + "?q=" + encodeURIComponent(t.getAttribute("data-term"));
+  });
+})();
+</script>
+</div>
+    </div>
+  </section>
+</div>
+</main>
+<footer id="site-footer"><div class="container footer-inner"><div><a class="logo" href="./"><span class="logo-text">Damye</span></a><p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div><div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div><div><h4>Social Channels</h4><a class="social" href="https://instagram.com/damye.kr" target="_blank" rel="noopener"><svg class="icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@damye.kr</a></div></div></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/config.js?v=202611150011"></script>
+<script src="assets/js/restaurants.js?v=202611150011"></script>
+<script src="assets/js/site.js?v=202611150011"></script>
+
+</body>
+</html>

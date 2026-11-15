@@ -125,7 +125,7 @@
       btn._t = setTimeout(function () { btn.textContent = label; }, 2200);
     }
     function manual() {
-      var host = btn.closest(".dq-actions, .db-actions") || btn.parentNode;
+      var host = btn.closest(".dq-actions, .db-actions, .qz-actions") || btn.parentNode;
       var box = host.querySelector(".share-fallback");
       if (!box) {
         box = document.createElement("div");
