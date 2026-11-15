@@ -679,3 +679,20 @@ body.modal-open { overflow: hidden; }
 /* Back link sits a little further from the page header; intro text spans the full quiz width */
 .quiz-back-link { margin-bottom: 32px; }
 .quiz-intro p { max-width: none; }
+
+/* ---------- Share buttons ---------- */
+.btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { background: var(--mint-soft); border-color: var(--mint); }
+.btn .icon { width: 18px; height: 18px; }
+.detail-actions { display: flex; flex-direction: column; gap: 10px; }
+.quiz-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 32px; }
+.quiz-topbar .quiz-back-link { margin-bottom: 0; }
+.share-pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
+  background: #fff; border: 1.5px solid var(--border); color: var(--text); font: inherit; font-size: .92rem; font-weight: 500; cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.share-pill:hover { background: var(--mint-soft); border-color: var(--mint); }
+.share-pill .icon { width: 16px; height: 16px; color: var(--mint-deep); }
+.share-pill:focus-visible, .btn-outline:focus-visible { outline: 3px solid var(--mint-deep); outline-offset: 2px; }
+.quiz-topbar + .share-fallback, .detail-actions .share-fallback { max-width: none; }

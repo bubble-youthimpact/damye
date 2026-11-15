@@ -18,6 +18,7 @@
     heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
     music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
     pin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/>',
     reset: '<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
     search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
     clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
@@ -118,20 +119,21 @@
   D.share = function (btn, title, text, link) {
     var full = text + " " + link;
     function flash(msg) {
-      var label = btn.getAttribute("data-label") || btn.textContent;
-      btn.setAttribute("data-label", label);
+      if (btn._label == null) btn._label = btn.innerHTML;
       btn.textContent = msg;
       clearTimeout(btn._t);
-      btn._t = setTimeout(function () { btn.textContent = label; }, 2200);
+      btn._t = setTimeout(function () { btn.innerHTML = btn._label; }, 2200);
     }
     function manual() {
-      var host = btn.closest(".dq-actions, .db-actions, .qz-actions") || btn.parentNode;
-      var box = host.querySelector(".share-fallback");
+      var host = btn.closest(".dq-actions, .db-actions, .qz-actions, .detail-actions");
+      var bar = host ? null : btn.closest(".quiz-topbar");
+      if (!host) host = bar ? bar.parentNode : btn.parentNode;
+      var box = host.querySelector(":scope > .share-fallback");
       if (!box) {
         box = document.createElement("div");
         box.className = "share-fallback";
         box.innerHTML = '<label>Copy this message and share it:</label><textarea readonly rows="3"></textarea>';
-        host.appendChild(box);
+        if (bar) bar.insertAdjacentElement("afterend", box); else host.appendChild(box);
       }
       var ta = box.querySelector("textarea");
       ta.value = full; ta.focus(); ta.select();
@@ -149,6 +151,13 @@
       });
     } else copy();
   };
+
+  /* Share buttons written in page HTML: <button data-share="Title" data-share-text="Message"> */
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-share]");
+    if (!b) return;
+    D.share(b, b.getAttribute("data-share"), b.getAttribute("data-share-text") || b.getAttribute("data-share"), window.location.href.split("#")[0]);
+  });
 
   /* A photo that can't load is swapped for the placeholder */
   D.imgFail = function (img) {
