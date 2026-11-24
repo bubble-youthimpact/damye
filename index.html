@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=202611150024">
+<link rel="stylesheet" href="assets/css/style.css?v=202611240001">
 </head>
 <body data-page="home" class="header-overlay">
 <header id="site-header"></header>
@@ -25,6 +25,27 @@
       <label class="sr-only" for="hero-q">Search for restaurants</label>
       <input id="hero-q" name="q" type="search" placeholder="Search for restaurants ...">
     </form>
+  </div>
+</section>
+
+<section class="section home-book">
+  <div class="container container-narrow home-book-grid">
+    <a class="book-cover-wrap" href="guidebook" aria-label="About the book Damye: A Taste of Seoul"><img class="book-cover" src="assets/book/cover-sm.webp" alt="Cover of Damye: A Taste of Seoul" width="455" height="643" loading="lazy"></a>
+    <div>
+      <span class="book-badge"><span data-icon="book"></span>New · Damye Guidebook</span>
+      <h2>Damye: A Taste of Seoul</h2>
+      <p class="book-byline">A neighborhood food guide by <strong>Katie Juneyoung Lee</strong></p>
+      <p class="book-lead">24 independent restaurants across Old Seoul, Yongsan, Seocho and Gangnam, chosen for their stories rather than their ratings. Every entry tells you what to order, when to go and how to get there.</p>
+      <div class="book-stats">
+        <div class="book-stat"><b>24</b><span>restaurants</span></div>
+        <div class="book-stat"><b>4</b><span>neighborhoods</span></div>
+        <div class="book-stat"><b>34</b><span>pages</span></div>
+      </div>
+      <div class="book-actions">
+        <a class="btn" href="guidebook?read=1"><span data-icon="book"></span>Read online</a>
+        <a class="btn btn-outline" href="guidebook">About the book</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -47,6 +68,7 @@
     <div class="card-grid" id="popular-grid"></div>
   </div>
 </section>
+
 
 <section class="section">
   <div class="container container-narrow">
@@ -72,14 +94,14 @@
   </div>
 </section>
 </main>
-<footer id="site-footer"><div class="container footer-inner"><div><a class="logo" href="./"><span class="logo-text">Damye</span></a><p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div><div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div><div><h4>Social Channels</h4><a class="social" href="https://instagram.com/damye.kr" target="_blank" rel="noopener"><svg class="icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@damye.kr</a></div></div></footer>
+<footer id="site-footer"><div class="container footer-inner"><div><a class="logo" href="./"><span class="logo-text">Damye</span></a><p>Discover restaurants curated by DAMYE.</p><p>© DAMYE. All Rights Reserved.</p></div><div><h4>Quick Links</h4><a href="about">About Us</a><a href="restaurants">Restaurants</a><a href="quiz">Quiz</a><a href="reports">Reports</a><a href="guidebook">Guidebook</a><a href="contact">Contact</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Service</a></div><div><h4>Social Channels</h4><a class="social" href="https://instagram.com/damye.kr" target="_blank" rel="noopener"><svg class="icon " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>@damye.kr</a></div></div></footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="assets/js/config.js?v=202611150024"></script>
-<script src="assets/js/restaurants.js?v=202611150024"></script>
-<script src="assets/js/site.js?v=202611150024"></script>
+<script src="assets/js/config.js?v=202611240001"></script>
+<script src="assets/js/restaurants.js?v=202611240001"></script>
+<script src="assets/js/site.js?v=202611240001"></script>
 <script>
 (function () {
   var D = Damye;

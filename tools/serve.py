@@ -29,6 +29,14 @@ class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
         # /about  ->  /about.html   (only when no file or folder of that name exists)
         if path not in ("", "/") and not os.path.exists(local) and os.path.exists(local + ".html"):
             self.path = path + ".html" + ("?" + parts.query if parts.query else "")
+        elif path not in ("", "/") and not os.path.exists(local):
+            # same as GitHub Pages: unknown addresses show 404.html
+            self.send_response(404)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            with open(os.path.join(ROOT, "404.html"), "rb") as f:
+                self.wfile.write(f.read())
+            return
         return super().do_GET()
 
 
