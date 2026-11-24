@@ -31,7 +31,7 @@
       </div>
       <div class="book-actions">
         <button class="btn" type="button" id="read-btn"><span data-icon="book"></span>Read online</button>
-        <a class="btn btn-outline" href="assets/book/damye-a-taste-of-seoul.pdf" download="Damye - A Taste of Seoul.pdf">Download PDF</a>
+        <a class="btn btn-outline dl-pdf" href="assets/book/damye-a-taste-of-seoul.pdf" download="Damye - A Taste of Seoul.pdf">Download PDF</a>
       </div>
       <p class="book-note">PDF · 34 pages · 3.2 MB</p>
     </div>
@@ -88,7 +88,7 @@
     <div class="rp-bar">
       <h2 id="rp-title">Damye: A Taste of Seoul</h2>
       <div class="rp-actions">
-        <a class="rp-btn rp-fill" href="assets/book/damye-a-taste-of-seoul.pdf" download="Damye - A Taste of Seoul.pdf">Download PDF</a>
+        <a class="rp-btn rp-fill dl-pdf" href="assets/book/damye-a-taste-of-seoul.pdf" download="Damye - A Taste of Seoul.pdf">Download PDF</a>
         <button type="button" class="rp-close" id="rp-close" aria-label="Close"><span data-icon="x"></span></button>
       </div>
     </div>
@@ -116,6 +116,18 @@
   var pagesEl = document.getElementById("rp-pages"), frame = document.getElementById("rp-frame");
   var loadingEl = document.getElementById("rp-loading");
   var pdfjsReady = null, currentDoc = null, token = 0, resizeTimer = null, lastFocus = null, jumpTo = 1;
+
+  // ---- Hidden counter: Firebase console → Firestore → stats → guidebook → views ----
+  //   +1 every time this page loads (refreshes included), every time "Read online" or a sample page
+  //   is opened, and every time "Download PDF" is clicked
+  function count() {
+    try {
+      if (!Damye.db) return;
+      Damye.db.collection("stats").doc("guidebook").set({ views: firebase.firestore.FieldValue.increment(1) }, { merge: true }).catch(function () {});
+    } catch (e) {}
+  }
+  count();
+  document.querySelectorAll(".dl-pdf").forEach(function (a) { a.addEventListener("click", count); });
 
   function loadPdfJs() {
     if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
@@ -165,6 +177,7 @@
 
   function open(page) {
     jumpTo = page || 1;
+    count();
     lastFocus = document.activeElement;
     modal.hidden = false;
     document.body.classList.add("modal-open");
